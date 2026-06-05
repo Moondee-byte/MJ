@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy 3rd Monthsary ❤️</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Google Fonts: Playfair Display + Lato -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ===================== FLOATING HEARTS CANVAS ===================== -->
+  <canvas id="heartsCanvas"></canvas>
+
+  <!-- ===================== MUSIC TOGGLE ===================== -->
+  <button class="music-btn" id="musicBtn" title="Toggle Music">
+    🎵
+  </button>
+  <!-- Soft royalty-free music via CDN -->
+  <audio id="bgMusic" loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- ===================== LANDING SECTION ===================== -->
+  <section class="landing" id="landing">
+    <!-- Decorative petal ring -->
+    <div class="petal-ring">
+      <span>🌸</span><span>💮</span><span>🌸</span><span>💮</span>
+      <span>🌸</span><span>💮</span><span>🌸</span><span>💮</span>
+    </div>
+
+    <p class="subtitle fade-up delay-1">three months of us</p>
+    <h1 class="main-title fade-up delay-2">
+      Happy 3rd<br />
+      <span class="highlight">Monthsary</span>
+      <span class="heart-icon">❤️</span>
+    </h1>
+    <p class="tagline fade-up delay-3">
+      Every day with you feels like the best day.
+    </p>
+
+    <!-- Button to open the letter -->
+    <button class="open-btn fade-up delay-4" id="openLetterBtn">
+      Open My Letter&nbsp; 💌
+    </button>
+  </section>
+
+  <!-- ===================== LOVE LETTER SECTION ===================== -->
+  <section class="letter-section" id="letterSection">
+    <div class="envelope-wrapper" id="envelopeWrapper">
+      <!-- Envelope flap decoration -->
+      <div class="envelope-top">
+        <div class="envelope-flap"></div>
+        <span class="seal">💌</span>
+      </div>
+
+      <!-- Letter card -->
+      <div class="letter-card" id="letterCard">
+        <p class="letter-date">{{ today's date }}</p>
+        <h2 class="letter-heading">To my favorite person,</h2>
+
+        <!-- Typed text appears here via JS -->
+        <div class="letter-body" id="letterBody"></div>
+
+        <p class="letter-sign">
+          Forever yours, <br />
+          <span class="sign-name">Your Love 💕</span>
+        </p>
+
+        <!-- Decorative hearts inside letter -->
+        <div class="letter-hearts">
+          <span>🌹</span>
+          <span>💗</span>
+          <span>🌹</span>
+        </div>
+
+        <button class="close-btn" id="closeLetterBtn">
+          ← Go Back
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
