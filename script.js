@@ -29,11 +29,11 @@ const letterParagraphs = [
 
   "You make things feel lighter. I don't know how you do it, but you do — and I'm really, really glad you do it around me.",
 
-  "Three months in and I'm not even close to done learning you. Every conversation we have adds a new page I didn't expect, and I keep wanting to read more. That's a good sign, I think.",
+  "Three months in and I'm not even close to done learning you. Every conversation we have adds a new page I didn't expect, and I keep wanting to read more. That's a good sign, I think hehe.",
 
-  "Here's to the next chapter — more adventures, more laughs, more of whatever this is. I'm in, completely.",
+  "Here's to the next chapter — more adventures, more laughs, more of whatever this is. I'm in forever.",
 
-  "I love you more than I know how to say — so I figured a little letter might help. 💕"
+  "I love you more than I know how to say — My pretty asawa, I Love You Soooo much . 💕"
 ];
 
 // ── SET DYNAMIC DATE ────────────────────────────────────────
