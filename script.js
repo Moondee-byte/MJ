@@ -1,225 +1,198 @@
-/* ============================================================
-   MONTHSARY WEBSITE — SCRIPT.JS
-   Features:
-   - Floating hearts canvas animation
-   - Open / close letter with animation
-   - Typing effect for the love letter
-   - Background music toggle
-   - Dynamic date in letter
-   ============================================================ */
+/* ============================================
+   MY CANDY — script.js
+   Handles: canvas hearts, scroll reveal,
+   typing letter, click hearts
+   ============================================ */
 
-// ── DOM REFERENCES ──────────────────────────────────────────
-const canvas        = document.getElementById('heartsCanvas');
-const ctx           = canvas.getContext('2d');
-const openBtn       = document.getElementById('openLetterBtn');
-const closeBtn      = document.getElementById('closeLetterBtn');
-const letterSection = document.getElementById('letterSection');
-const landing       = document.getElementById('landing');
-const letterBody    = document.getElementById('letterBody');
-const letterDate    = document.querySelector('.letter-date');
-const musicBtn      = document.getElementById('musicBtn');
-const bgMusic       = document.getElementById('bgMusic');
+// ============ CANVAS FLOATING HEARTS ============
+const canvas = document.getElementById('heartCanvas');
+const ctx = canvas.getContext('2d');
 
-// ── LOVE LETTER TEXT ────────────────────────────────────────
-// Edit the paragraphs below to personalize the message.
-const letterParagraphs = [
-  "Three months. Ninety-something days. And somehow every single one of them felt like I won a little lottery I didn't even know I'd entered.",
-
-  "Thank you — for the good mornings that made waking up easier, for the little check-ins that turned ordinary days into something I actually looked forward to. Thank you for laughing at my jokes even when they probably didn't deserve it, and for being honest with me even when honesty was harder.",
-
-  "You make things feel lighter. I don't know how you do it, but you do — and I'm really, really glad you do it around me.",
-
-  "Three months in and I'm not even close to done learning you. Every conversation we have adds a new page I didn't expect, and I keep wanting to read more. That's a good sign, I think hehe.",
-
-  "Here's to the next chapter — more adventures, more laughs, more of whatever this is. I'm in forever.",
-
-  "I love you more than I know how to say — My pretty asawa, I Love You Soooo much . 💕"
-];
-
-// ── SET DYNAMIC DATE ────────────────────────────────────────
-(function setDate() {
-  const now = new Date();
-  const opts = { year: 'numeric', month: 'long', day: 'numeric' };
-  letterDate.textContent = now.toLocaleDateString('en-US', opts);
-})();
-
-// ── FLOATING HEARTS CANVAS ──────────────────────────────────
 let hearts = [];
+const HEART_COUNT = 18;
+const EMOJIS = ['❤️','🩷','💕','💖','💗','🌸'];
 
-/** Resize canvas to fill viewport */
-function resizeCanvas() {
+function resize() {
   canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight;
 }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+resize();
+window.addEventListener('resize', resize);
 
-/** Single heart object */
-class Heart {
-  constructor() {
-    this.reset(true);
-  }
-
-  reset(init = false) {
-    this.x     = Math.random() * canvas.width;
-    this.y     = init ? Math.random() * canvas.height : canvas.height + 30;
-    this.size  = 10 + Math.random() * 20;
-    this.speed = 0.5 + Math.random() * 1.2;
-    this.drift = (Math.random() - 0.5) * 0.6;   // gentle horizontal sway
-    this.alpha = 0.15 + Math.random() * 0.55;
-    this.wobble      = Math.random() * Math.PI * 2; // phase offset
-    this.wobbleSpeed = 0.015 + Math.random() * 0.02;
-    // Palette: soft pinks and roses
-    const colors = ['#f9b8cc', '#e8638c', '#c0395f', '#fcd7e2', '#ff8fab'];
-    this.color = colors[Math.floor(Math.random() * colors.length)];
-  }
-
-  /** Draw an SVG-style heart using bezier curves */
-  draw() {
-    ctx.save();
-    ctx.globalAlpha = this.alpha;
-    ctx.fillStyle   = this.color;
-    ctx.translate(this.x, this.y);
-    ctx.beginPath();
-    const s = this.size;
-    ctx.moveTo(0, s * 0.3);
-    ctx.bezierCurveTo(-s, -s * 0.3,  -s * 1.8, s * 0.6,  0,  s * 1.3);
-    ctx.bezierCurveTo( s * 1.8, s * 0.6,  s, -s * 0.3,  0,  s * 0.3);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  update() {
-    this.wobble += this.wobbleSpeed;
-    this.x += Math.sin(this.wobble) * 0.8 + this.drift;
-    this.y -= this.speed;
-    if (this.y < -this.size * 2) this.reset();
-  }
+function spawnHeart() {
+  return {
+    x:     Math.random() * canvas.width,
+    y:     canvas.height + 30,
+    emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
+    size:  14 + Math.random() * 18,
+    speed: 0.5 + Math.random() * 0.8,
+    drift: (Math.random() - 0.5) * 0.6,
+    opacity: 0.3 + Math.random() * 0.5,
+  };
 }
 
-/** Spawn initial hearts */
-function initHearts(count = 38) {
-  hearts = [];
-  for (let i = 0; i < count; i++) hearts.push(new Heart());
+for (let i = 0; i < HEART_COUNT; i++) {
+  const h = spawnHeart();
+  h.y = Math.random() * canvas.height; // start scattered
+  hearts.push(h);
 }
-initHearts();
 
-/** Animation loop */
-function animateHearts() {
+function drawHearts() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  hearts.forEach(h => { h.update(); h.draw(); });
-  requestAnimationFrame(animateHearts);
-}
-animateHearts();
+  hearts.forEach(h => {
+    ctx.save();
+    ctx.globalAlpha = h.opacity;
+    ctx.font = `${h.size}px serif`;
+    ctx.fillText(h.emoji, h.x, h.y);
+    ctx.restore();
 
-// ── OPEN LETTER ─────────────────────────────────────────────
-openBtn.addEventListener('click', () => {
-  // Hide landing
-  landing.classList.add('hidden');
+    h.y     -= h.speed;
+    h.x     += h.drift;
+    h.opacity -= 0.0008;
 
-  // Show letter section
-  letterSection.classList.add('visible');
-
-  // Start typing after the letter card slides in (~800ms)
-  setTimeout(startTyping, 900);
-});
-
-// ── CLOSE LETTER ────────────────────────────────────────────
-closeBtn.addEventListener('click', () => {
-  letterSection.classList.remove('visible');
-
-  setTimeout(() => {
-    landing.classList.remove('hidden');
-    // Reset typed content so it types again next open
-    letterBody.innerHTML = '';
-    typingDone = false;
-  }, 600);
-});
-
-// ── TYPING EFFECT ───────────────────────────────────────────
-let typingDone = false;
-let typingTimeout = null;
-
-function startTyping() {
-  if (typingDone) return;
-  letterBody.innerHTML = '';
-
-  let paraIndex = 0;   // which paragraph we're on
-  let charIndex = 0;   // which char within that paragraph
-  let currentP  = null;
-
-  // Cursor element that blinks while typing
-  const cursor = document.createElement('span');
-  cursor.className = 'cursor';
-
-  function nextChar() {
-    // Move to next paragraph if needed
-    if (!currentP || charIndex >= letterParagraphs[paraIndex].length) {
-      if (currentP) paraIndex++;                   // advance after finishing one
-      if (paraIndex >= letterParagraphs.length) {  // all done
-        cursor.remove();
-        typingDone = true;
-        return;
-      }
-      // Create a new <p> and start typing into it
-      currentP = document.createElement('p');
-      if (paraIndex > 0) currentP.style.marginTop = '1rem';
-      letterBody.appendChild(currentP);
-      letterBody.appendChild(cursor);
-      charIndex = 0;
+    if (h.y < -40 || h.opacity <= 0) {
+      Object.assign(h, spawnHeart());
     }
+  });
+  requestAnimationFrame(drawHearts);
+}
+drawHearts();
 
-    const ch = letterParagraphs[paraIndex][charIndex];
-    currentP.textContent += ch;
+
+// ============ SCROLL REVEAL ============
+const revealEls = document.querySelectorAll('.reveal');
+
+function checkReveal() {
+  const trigger = window.innerHeight * 0.88;
+  revealEls.forEach(el => {
+    const top = el.getBoundingClientRect().top;
+    if (top < trigger) {
+      el.classList.add('visible');
+    }
+  });
+}
+
+// Trigger intro immediately
+window.addEventListener('load', () => {
+  setTimeout(checkReveal, 100);
+});
+window.addEventListener('scroll', checkReveal, { passive: true });
+
+
+// ============ LETTER TYPING EFFECT ============
+const openBtn   = document.getElementById('openBtn');
+const letter    = document.getElementById('letter');
+const typedText = document.getElementById('typedText');
+const letterEnd = document.getElementById('letter-end');
+
+// The letter — personal, raw, real
+const message =
+`My Candy,
+
+Naa ko diri, trying to find the right words —
+and you know mag lisod kog ingon ani hshshs😅
+
+But here goes.
+
+Three months. 
+Doesn't sound like a lot, does it?
+But every single day of those three months,
+you've been the highlight of mine.
+
+I still think about that first night I messaged you.
+And i know na first thought nimo that I was weird — and honestly, you weren't wrong.
+But instead of leaving, you stayed.
+And that means everything.
+
+We didn't need grand dates or big moments.
+We had late nights and long chats,
+scrolling through stuff together,
+laughing at things only we'd find funny.
+Those simple things — that's what I'll always treasure.
+
+Thank you for not giving up on me.
+Thank you for accepting me, all of me —
+the weird parts, the quiet parts, the stubborn parts.
+You never asked me to be anyone else.
+
+This distance is hard, my love.
+really hard. 
+I won't pretend it isn't.
+But every day I wake up knowing you're there —
+praying for you, missing you, loving you through everything. 
+
+I can't give you everything yet.
+But I promise —
+one day, I will make up for all of it.
+
+You are my missing piece, My love.
+My life feels more complete with you in it.
+And I don't say that lightly —
+I say it because I mean it with everything I have.
+
+Sa bisan unsa pang mahitabo,
+at the end of every day —
+it's you I'm choosing.
+Always you.
+
+Here's to our 3rd monthsary,
+and to all the months still to come.
+I'm wishing for our forever. 🌸
+
+I love you so much, My sweet sweet Candy.
+So, so, so much. 🩷`;
+
+let charIndex = 0;
+let typingActive = false;
+let cursor;
+
+function typeWriter() {
+  if (!typingActive) return;
+
+  if (charIndex < message.length) {
+    // Remove cursor temporarily
+    if (cursor) cursor.remove();
+
+    typedText.textContent = message.slice(0, charIndex + 1);
     charIndex++;
 
-    // Punctuation pauses feel more natural
-    const pauseChars = ['.', ',', '!', '?', '—'];
-    const delay = pauseChars.includes(ch) ? 65 : 26;
-    typingTimeout = setTimeout(nextChar, delay);
-  }
+    // Re-add cursor
+    cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    typedText.appendChild(cursor);
 
-  nextChar();
+    // Vary speed slightly for realism
+    const ch    = message[charIndex - 1];
+    const delay = (ch === '\n') ? 80 : (ch === ',' || ch === '.') ? 120 : 35;
+    setTimeout(typeWriter, delay);
+  } else {
+    // Done typing
+    if (cursor) cursor.remove();
+    letterEnd.classList.remove('hidden');
+  }
 }
 
-// ── MUSIC TOGGLE ────────────────────────────────────────────
-let musicPlaying = false;
-
-musicBtn.addEventListener('click', () => {
-  if (musicPlaying) {
-    bgMusic.pause();
-    musicBtn.classList.remove('playing');
-    musicBtn.textContent = '🎵';
-    musicPlaying = false;
-  } else {
-    bgMusic.volume = 0.35;
-    bgMusic.play().catch(() => {
-      // Autoplay blocked — silently ignore
-    });
-    musicBtn.classList.add('playing');
-    musicBtn.textContent = '🎶';
-    musicPlaying = true;
-  }
+openBtn.addEventListener('click', () => {
+  letter.classList.remove('hidden');
+  openBtn.style.display = 'none';
+  typingActive = true;
+  typeWriter();
 });
 
-// ── SPARKLE ON CLICK ────────────────────────────────────────
-// Small hearts burst from wherever you click
-document.addEventListener('click', (e) => {
-  // Skip if clicking a button
-  if (e.target.tagName === 'BUTTON') return;
 
-  for (let i = 0; i < 5; i++) {
-    const h = new Heart();
-    h.x     = e.clientX + (Math.random() - 0.5) * 30;
-    h.y     = e.clientY;
-    h.size  = 6 + Math.random() * 10;
-    h.speed = 1.5 + Math.random() * 2;
-    h.alpha = 0.7;
-    hearts.push(h);
-  }
+// ============ CLICK HEARTS ============
+const clickEmojis = ['💖','🩷','❤️','💕','🌸','✨','💗'];
 
-  // Remove extra hearts after burst so we don't accumulate endlessly
-  setTimeout(() => {
-    if (hearts.length > 60) hearts.splice(0, 5);
-  }, 3000);
+document.addEventListener('click', e => {
+  // Don't spawn on button clicks
+  if (e.target.closest('button')) return;
+
+  const el = document.createElement('div');
+  el.className = 'click-heart';
+  el.textContent = clickEmojis[Math.floor(Math.random() * clickEmojis.length)];
+  el.style.left = (e.clientX - 12) + 'px';
+  el.style.top  = (e.clientY - 12) + 'px';
+  document.body.appendChild(el);
+
+  setTimeout(() => el.remove(), 1000);
 });
