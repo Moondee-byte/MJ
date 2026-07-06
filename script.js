@@ -531,8 +531,8 @@ I love you. Always.
     "I wish for every 'goodnight' to eventually become 'goodnight, I'm right here.'",
     "I wish for a love that never runs out of good mornings.",
     "I wish for you to always feel as loved as you make me feel.",
-    "Here's a little secret: you were the best decision these four months made. And I'd still make that decision over and over",
-    "Here's a little secret: I practice what I'll say when I see you next.",
+    "Here's a little secret: you were the best decision these four months made.",
+    "And I'd still make that decision over and over", 
     "Here's a little secret: your voice is my favorite sound in the world.",
   ];
 
