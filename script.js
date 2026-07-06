@@ -186,25 +186,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const LETTER = `My Love,
 
-Four months. It still amazes me that something that started so simply has grown into one of the best parts of my life.
+Four months in a blink of an eye. It still amazes me that something that started so simply has grown into one of the best parts of my life.
 
 Every call means the world to me, even the ones where we don't say much and just stay on the line doing our own thing. I love that we've turned "nothing" into something worth showing up for, every single day.
 
-Every message makes my day a little brighter, even a random "hi" from you in the middle of my busy hours has a way of making everything feel lighter.
+Every message makes my day a little brighter, i mean it, even a random "hello love" from you in the middle of the day has a way of making everything feel lighter.
 
 Thank you for staying, for choosing this — for choosing us — even when the distance makes it harder than it should be. That means more to me than I know how to say.
 
 I'm proud of what we've built. Proud of how patient we've been with each other, how we keep choosing honesty and effort over giving up when things get hard. Not every love survives distance. Ours is learning how to.
 
-I can't wait for the day we no longer have to end our calls with "goodbye" — when goodnight means I get to see you, not just hear you. Until then, I'll keep showing up, one call, one message, one monthsary at a time.
+I can't wait for the day we no longer have to end our calls with "byebye baby" — when goodnight means I get to see you, not just hear you. Until then, I'll keep showing up, one call, one message, one monthsary at a time.
 
-I'm excited for everything still ahead of us. The plans we've talked about, the ones we haven't said out loud yet, the ordinary days we're going to get to finally share in person.
+I'm excited for everything still ahead of us. The plans we've talked about the ones we haven't said out loud yet, the ordinary days we're going to get to finally share in person.
 
 Happy 4th monthsary, my babyy. Thank you for four months of choosing me. Here's to closing the distance, one day at a time — and to a lifetime of never having to say goodbye again.
 
 I love you. Always.
 
-— Yours, across every mile`;
+— Yours, palangga`;
 
   function typeLetter() {
     if (letterTyped) return;
@@ -344,17 +344,17 @@ I love you. Always.
     "Goodnight, my babyy. Sleep well — I'll be here when you wake up.",
     "One day we won't need a screen to hold hands. I'm counting down.",
     "You're the last tab I close and the first thing I check in the morning.",
-    "Distance made me a professional at loving you long-distance. New skill unlocked.",
+    "Distance made me a professional at loving you long-distance. New skill unlocked hehe.",
     "If missing you burned calories, I'd be the healthiest person alive.",
     "Every video call with you feels like a mini date, and I never want it to end.",
     "I dream about the day I get to hold your hand instead of just hearing your voice.",
-    "My candy, you make even the most ordinary Tuesday feel like something worth smiling about.",
+    "My love, you make even the most ordinary day feel like something worth smiling about.",
     "I saved a seat next to me today. It was for you, even if you weren't really there.",
     "You are the reason my phone battery drains so fast — and I regret nothing.",
     "One day, 'goodnight' will come with a kiss instead of a call ending.",
     "I love you in every timezone, at every hour, no exceptions.",
     "Thinking of you isn't something I schedule — it just happens, all day, every day.",
-    "My wife-to-be, I can't wait to build a life where we don't have to say 'talk later.'",
+    "My future wife, I can't wait to build a life where we don't have to say 'talk later.'",
     "Every 'good morning' text from you is my favorite alarm.",
     "The distance is temporary. What we're building is not.",
     "I love loving you, even from this far away.",
@@ -375,11 +375,11 @@ I love you. Always.
     "Every laugh we share on call is a memory I keep long after we hang up.",
     "You make long distance feel less like a challenge and more like a promise.",
     "I hope our future is full of the hand-holding we're saving up right now.",
-    "My candy, even a boring day feels sweeter knowing I get to talk to you.",
+    "My babyy, even a boring day feels sweeter knowing I get to talk to you.",
     "I love the version of us that keeps choosing each other, miles apart.",
     "One day there will be no more 'goodbye,' only 'see you at home.'",
     "You're the calm in my chaos, even through a phone screen.",
-    "I love you across time zones, screens, and every mile in between.",
+    "I love you across time, screens, and every mile in between.",
     "The best part of my day is always the part where I get to talk to you.",
     "I can't wait to trade video calls for actual, real-life hugs.",
     "Every 'I miss you' text is really just me saying 'I love you' in disguise.",
@@ -428,33 +428,31 @@ I love you. Always.
   const REASONS = [
     "Your smile — it's honestly my favorite thing on the planet.",
     "Your kindness, even to people who don't deserve it.",
-    "Your patience with me, especially on my off days.",
-    "The way you support every random idea I have.",
+    "Your patience with me, especially on my dum ass days.",
+    "The way you support every random thought I have.",
     "How safe I feel just talking to you about anything.",
-    "The way you say good morning like you mean it.",
-    "How you remember tiny details I mentioned once.",
-    "Your laugh — it's basically my favorite sound.",
+    "The way you say i love you like you mean it.",
+    "How you sometimes don't remember some things I mentioned once.",
+    "Your laugh the (the cutest) — it's basically my favorite sound.",
     "The way you make ordinary days feel special.",
-    "How you never make me feel silly for missing you.",
+    "How you never make me feel bad for missing you so much.",
     "Your honesty, even when it's the harder thing to say.",
     "The way you fight for us despite the distance.",
-    "How you check in on me without me even asking.",
     "Your strength on days you don't feel strong.",
     "The way your voice instantly calms me down.",
     "How you celebrate my small wins like they're huge.",
-    "Your curiosity about my day, every single day.",
     "The way you say my name.",
     "How effortlessly you make me want to be better.",
-    "Your patience during our time-zone gymnastics.",
+    "Your patience during our small or big fights.",
     "The way you still get shy sometimes — it's adorable.",
-    "How you never let a fight turn into silence.",
+    "How you never let a fight turn into an end.",
     "Your loyalty — you've never given me a reason to doubt you.",
     "The way you plan our future like it's already certain.",
     "How you make waiting feel worth it.",
     "Your humor — you make even bad days funny.",
-    "The way you say 'I miss you' like it still surprises you.",
+    "The way you say I miss you.",
     "How you show up, call after call, day after day.",
-    "The way you love me in all my inconvenient time zones.",
+    "The way you love me in all my dum ass moments.",
     "Simply put — you. All of you, exactly as you are.",
   ];
 
@@ -526,14 +524,14 @@ I love you. Always.
     "I wish for lazy Sundays with you, in person, no calls needed.",
     "I wish for every future birthday spent together.",
     "I wish for the both of us to keep choosing each other, always.",
-    "I wish for a future full of inside jokes we haven't made yet.",
+    "I wish for a future full love,cuddles and kisses.",
     "I wish for the trip we keep planning to actually happen.",
-    "I wish for slow mornings where I get to see your real face, not a screen.",
+    "I wish for slow mornings where I get to see you real time, not through a screen.",
     "I wish for us to grow old still calling each other silly names.",
     "I wish for every 'goodnight' to eventually become 'goodnight, I'm right here.'",
     "I wish for a love that never runs out of good mornings.",
     "I wish for you to always feel as loved as you make me feel.",
-    "Here's a little secret: you were the best decision these four months made.",
+    "Here's a little secret: you were the best decision these four months made. And I'd still make that decision over and over",
     "Here's a little secret: I practice what I'll say when I see you next.",
     "Here's a little secret: your voice is my favorite sound in the world.",
   ];
@@ -588,7 +586,7 @@ I love you. Always.
   let fireflies = [];
 
   const FINALE_LINES = [
-    "My Love.", "My Babyy.", "My Wife.", "Love Love Ko.", "My Candy.",
+    "My Love.", "My Babyy.", "My Wife.", "Love Love Ko.", "Palangga ko.",
     "Four beautiful months.", "A lifetime to go.",
     "I'll keep choosing you.",
     "I love you more than words could ever describe."
