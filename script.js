@@ -1,556 +1,710 @@
-/* =========================================================================
-   4th Monthsary — script.js
-   Vanilla JS only. Everything works by opening index.html directly.
-   ========================================================================= */
+/* ==========================================================================
+   4TH MONTHSARY — SCRIPT
+   Plain vanilla JS. No frameworks, no build step.
+   Organized into clearly labeled sections so it's easy to edit later.
+   ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* ------------------------------------------------------------------ */
-  /* AMBIENT FLOATING HEARTS                                             */
-  /* ------------------------------------------------------------------ */
-  const ambientLayer = document.getElementById('ambientLayer');
-  const ambientEmojis = ['❤️','💕','💗','✨'];
-  function spawnAmbientHeart(){
-    const el = document.createElement('span');
-    el.className = 'ambient-heart';
-    el.textContent = ambientEmojis[Math.floor(Math.random()*ambientEmojis.length)];
-    const left = Math.random()*100;
-    const duration = 10 + Math.random()*10;
-    const drift = (Math.random()*80 - 40) + 'px';
-    el.style.left = left + 'vw';
-    el.style.setProperty('--drift', drift);
-    el.style.animationDuration = duration + 's';
-    el.style.fontSize = (0.9 + Math.random()*1.2) + 'rem';
-    ambientLayer.appendChild(el);
-    setTimeout(() => el.remove(), duration*1000 + 500);
+  /* ------------------------------------------------------------------ *
+   * 0. SMALL HELPERS
+   * ------------------------------------------------------------------ */
+  const qs  = (sel, ctx = document) => ctx.querySelector(sel);
+  const qsa = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+  const rand = (min, max) => Math.random() * (max - min) + min;
+  const randInt = (min, max) => Math.floor(rand(min, max + 1));
+
+  /* ------------------------------------------------------------------ *
+   * 1. SCREEN NAVIGATION
+   * ------------------------------------------------------------------ */
+  const screens = qsa('.screen');
+
+  function showScreen(name) {
+    screens.forEach(s => s.classList.toggle('active', s.dataset.screen === name));
+    window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+
+    // trigger section-specific "on open" behaviour
+    if (name === 'reasons') buildFlipCards();
+    if (name === 'distance') animateCounters();
+    if (name === 'sky') buildNightSky();
+    if (name === 'finale') playFinale();
+    if (name === 'game') resetGame();
   }
-  setInterval(spawnAmbientHeart, 900);
-  for(let i=0;i<6;i++) setTimeout(spawnAmbientHeart, i*400);
 
-  /* ------------------------------------------------------------------ */
-  /* SCREEN / PANEL NAVIGATION                                           */
-  /* ------------------------------------------------------------------ */
-  const homeScreen = document.getElementById('homeScreen');
-  const hubScreen = document.getElementById('hubScreen');
-  const startBtn = document.getElementById('startExploringBtn');
-  const allPanels = document.querySelectorAll('.panel');
-
-  startBtn.addEventListener('click', () => {
-    homeScreen.classList.remove('active-screen');
-    hubScreen.classList.add('active-screen');
+  qs('#start-btn').addEventListener('click', (e) => {
+    rippleEffect(e);
+    showScreen('menu');
+    startMusic();
   });
 
-  function openPanel(id){
-    allPanels.forEach(p => p.classList.remove('active-panel'));
-    const target = document.getElementById('panel-' + id);
-    if(target){
-      target.classList.add('active-panel');
-      target.scrollTop = 0;
-      window.scrollTo(0,0);
+  qsa('.menu-card').forEach(card => {
+    card.addEventListener('click', () => showScreen(card.dataset.panel));
+  });
+
+  qsa('[data-back]').forEach(btn => {
+    btn.addEventListener('click', () => showScreen('menu'));
+  });
+
+  /* ------------------------------------------------------------------ *
+   * 2. BUTTON RIPPLE EFFECT
+   * ------------------------------------------------------------------ */
+  function rippleEffect(e) {
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+    btn.style.position = 'relative';
+    btn.style.overflow = 'hidden';
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 650);
+  }
+  qsa('.btn-glow').forEach(b => b.addEventListener('click', rippleEffect));
+
+  /* ------------------------------------------------------------------ *
+   * 3. AMBIENT FLOATING HEARTS (canvas, whole-site background)
+   * ------------------------------------------------------------------ */
+  const bgCanvas = qs('#hearts-bg');
+  const bgCtx = bgCanvas.getContext('2d');
+  let bgHearts = [];
+
+  function resizeBgCanvas() {
+    bgCanvas.width = window.innerWidth;
+    bgCanvas.height = window.innerHeight;
+  }
+  resizeBgCanvas();
+  window.addEventListener('resize', resizeBgCanvas);
+
+  function makeBgHeart() {
+    return {
+      x: rand(0, bgCanvas.width),
+      y: bgCanvas.height + rand(0, 200),
+      size: rand(8, 20),
+      speed: rand(0.25, 0.7),
+      drift: rand(-0.3, 0.3),
+      sway: rand(0, Math.PI * 2),
+      opacity: rand(0.15, 0.45),
+    };
+  }
+  for (let i = 0; i < 18; i++) bgHearts.push(makeBgHeart());
+
+  function drawHeart(ctx, x, y, size, opacity) {
+    ctx.save();
+    ctx.globalAlpha = opacity;
+    ctx.fillStyle = '#FF9EC2';
+    ctx.translate(x, y);
+    ctx.beginPath();
+    const s = size / 16;
+    ctx.moveTo(0, 4 * s);
+    ctx.bezierCurveTo(0, 2 * s, -4 * s, -4 * s, -8 * s, 0);
+    ctx.bezierCurveTo(-14 * s, 6 * s, -2 * s, 12 * s, 0, 16 * s);
+    ctx.bezierCurveTo(2 * s, 12 * s, 14 * s, 6 * s, 8 * s, 0);
+    ctx.bezierCurveTo(4 * s, -4 * s, 0, 2 * s, 0, 4 * s);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function animateBgHearts() {
+    bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+    bgHearts.forEach(h => {
+      h.y -= h.speed;
+      h.sway += 0.01;
+      h.x += Math.sin(h.sway) * 0.3 + h.drift * 0.1;
+      if (h.y < -30) Object.assign(h, makeBgHeart(), { y: bgCanvas.height + 30 });
+      drawHeart(bgCtx, h.x, h.y, h.size, h.opacity);
+    });
+    requestAnimationFrame(animateBgHearts);
+  }
+  animateBgHearts();
+
+  /* ------------------------------------------------------------------ *
+   * 4. MUSIC — fade in after "Start Exploring", mute/unmute button
+   * ------------------------------------------------------------------ */
+  const music = qs('#bg-music');
+  const musicToggle = qs('#music-toggle');
+  const musicIcon = qs('#music-icon');
+  const tapHint = qs('#tap-hint');
+  const TARGET_VOLUME = 0.25;
+  let musicStarted = false;
+  let musicMuted = false;
+
+  music.volume = 0;
+
+  function fadeMusicIn(duration = 2500) {
+    const steps = 30;
+    const stepTime = duration / steps;
+    let count = 0;
+    const stepVol = TARGET_VOLUME / steps;
+    const fade = setInterval(() => {
+      count++;
+      music.volume = Math.min(TARGET_VOLUME, stepVol * count);
+      if (count >= steps) clearInterval(fade);
+    }, stepTime);
+  }
+
+  function startMusic() {
+    if (musicStarted) return;
+    musicStarted = true;
+    const playPromise = music.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => fadeMusicIn())
+        .catch(() => {
+          // autoplay blocked — invite the first tap anywhere on the page
+          tapHint.classList.add('show');
+          const resumeOnTap = () => {
+            music.play().then(fadeMusicIn).catch(() => {});
+            tapHint.classList.remove('show');
+            document.removeEventListener('click', resumeOnTap);
+            document.removeEventListener('touchstart', resumeOnTap);
+          };
+          document.addEventListener('click', resumeOnTap, { once: true });
+          document.addEventListener('touchstart', resumeOnTap, { once: true });
+        });
     }
   }
-  function closePanel(){
-    allPanels.forEach(p => p.classList.remove('active-panel'));
-    window.scrollTo(0,0);
-  }
-  document.querySelectorAll('.btn-back').forEach(btn => {
-    btn.addEventListener('click', closePanel);
+
+  musicToggle.addEventListener('click', () => {
+    musicMuted = !musicMuted;
+    music.muted = musicMuted;
+    musicToggle.classList.toggle('muted', musicMuted);
+    musicToggle.classList.toggle('spin', !musicMuted);
+    musicIcon.textContent = musicMuted ? '🔇' : '🎵';
+    if (!musicStarted) startMusic();
   });
 
-  /* ------------------------------------------------------------------ */
-  /* HUB — HEART-SHAPED CONSTELLATION (signature element)                */
-  /* ------------------------------------------------------------------ */
-  const hubHeart = document.getElementById('hubHeart');
-  const hubPolygon = document.getElementById('hubPolygon');
-
-  // Positions precomputed from the heart parametric curve (percent left/top)
-  const nodes = [
-    { x:50.0, y:19.7, icon:'💌', label:'A Letter', target:'letter' },
-    { x:61.8, y:0.0,  icon:'🖼️', label:'Little Moments', target:'gallery' },
-    { x:100.0,y:3.8,  icon:'💗', label:'Catch My Heart', target:'game' },
-    { x:100.0,y:44.9, icon:'📝', label:'Love Notes', target:'notes' },
-    { x:61.8, y:81.3, icon:'🔄', label:'Reasons Why', target:'reasons' },
-    { x:50.0, y:100.0,icon:'✨', label:'The Last One', target:'final' },
-    { x:38.2, y:81.3, icon:'🌠', label:'Our Dreams', target:'dreams' },
-    { x:0.0,  y:44.9, icon:'🌍', label:'Our Distance', target:'distance' },
-    { x:0.0,  y:3.8,  icon:'⭐', label:'Night Sky', target:'sky' },
-    { x:38.2, y:0.0,  icon:'🎁', label:'A Surprise', target:'gift' },
-  ];
-
-  hubPolygon.setAttribute('points', nodes.map(n => `${n.x},${n.y}`).join(' '));
-
-  nodes.forEach((n, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'hub-node';
-    btn.style.left = n.x + '%';
-    btn.style.top = n.y + '%';
-    btn.style.animationDelay = (i*0.3) + 's';
-    btn.innerHTML = `<span class="node-icon">${n.icon}</span><span class="node-label">${n.label}</span>`;
-    btn.addEventListener('click', () => openPanelWithHooks(n.target));
-    hubHeart.appendChild(btn);
-  });
-
-  /* ------------------------------------------------------------------ */
-  /* LOVE LETTER — envelope + typing effect                              */
-  /* ------------------------------------------------------------------ */
-  const envelope = document.getElementById('envelope');
-  const envelopeHint = document.getElementById('envelopeHint');
-  const letterPaper = document.getElementById('letterPaper');
-  const letterText = document.getElementById('letterText');
-
-  const loveLetter = `My Love,
-
-Four months ago I didn't know that a voice through a screen could feel like home, but here we are, and somehow you've become the best part of every single day.
-
-I'm grateful for every call that ran too long and every message that made me smile at my phone like an idiot in public. I'm grateful for the good mornings you send before I'm even awake, and the good nights you never forget to say, no matter how tired you are.
-
-People warned me long distance would be hard, and My Babyy, it has been. But it hasn't made us weaker. If anything, it's the reason I know exactly how much I want this, how much I want you, because I chose you without the easy parts, and I'd choose you again.
-
-I look forward to the day a call doesn't have to end. The day "talk to you tomorrow" turns into "see you in five minutes." Until then, I'll take every version of you I can get, the voice notes, the blurry video calls, the 2am texts, all of it.
-
-Thank you for your patience with me, My Wife. Thank you for loving me across time zones and bad signal and all the ordinary days I couldn't be there in person. You make distance feel like a small, temporary inconvenience instead of a wall.
-
-I don't know exactly what our future looks like, but I know you're in it, Love Love Ko. I know I want mornings that aren't goodbyes and a life we don't have to schedule around time differences.
-
-Happy 4th Monthsary, My Candy. Here's to every month after this one.`;
-
+  /* ------------------------------------------------------------------ *
+   * 5. LOVE LETTER — envelope open + typewriter effect
+   * ------------------------------------------------------------------ */
+  const envelope = qs('#envelope');
+  const letterTextEl = qs('#letter-text');
+  let letterOpened = false;
   let letterTyped = false;
-  function typeLetter(){
-    if(letterTyped) return;
+
+  const LETTER = `My Love,
+
+Four months. It still amazes me that something that started so simply has grown into one of the best parts of my life.
+
+Every call means the world to me, even the ones where we don't say much and just stay on the line doing our own thing. I love that we've turned "nothing" into something worth showing up for, every single day.
+
+Every message makes my day a little brighter, even a random "hi" from you in the middle of my busy hours has a way of making everything feel lighter.
+
+Thank you for staying, for choosing this — for choosing us — even when the distance makes it harder than it should be. That means more to me than I know how to say.
+
+I'm proud of what we've built. Proud of how patient we've been with each other, how we keep choosing honesty and effort over giving up when things get hard. Not every love survives distance. Ours is learning how to.
+
+I can't wait for the day we no longer have to end our calls with "goodbye" — when goodnight means I get to see you, not just hear you. Until then, I'll keep showing up, one call, one message, one monthsary at a time.
+
+I'm excited for everything still ahead of us. The plans we've talked about, the ones we haven't said out loud yet, the ordinary days we're going to get to finally share in person.
+
+Happy 4th monthsary, my babyy. Thank you for four months of choosing me. Here's to closing the distance, one day at a time — and to a lifetime of never having to say goodbye again.
+
+I love you. Always.
+
+— Yours, across every mile`;
+
+  function typeLetter() {
+    if (letterTyped) return;
     letterTyped = true;
-    letterPaper.classList.add('show');
-    letterText.textContent = '';
+    letterTextEl.textContent = '';
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
     let i = 0;
-    const speed = 14;
-    function step(){
-      if(i <= loveLetter.length){
-        letterText.textContent = loveLetter.slice(0, i);
-        i += 2;
-        setTimeout(step, speed);
+    const speed = 18; // ms per character — feels natural, not sluggish
+    function typeChar() {
+      if (i < LETTER.length) {
+        letterTextEl.textContent += LETTER.charAt(i);
+        i++;
+        letterTextEl.parentElement.scrollTop = letterTextEl.parentElement.scrollHeight;
+        setTimeout(typeChar, speed);
       }
     }
-    step();
+    typeChar();
   }
+
   envelope.addEventListener('click', () => {
-    envelope.classList.add('opened');
-    envelopeHint.textContent = 'opening for you...';
+    if (letterOpened) return;
+    letterOpened = true;
+    envelope.classList.add('open');
     setTimeout(typeLetter, 500);
   });
 
-  /* ------------------------------------------------------------------ */
-  /* GALLERY + LIGHTBOX                                                  */
-  /* ------------------------------------------------------------------ */
-  const galleryGrid = document.getElementById('galleryGrid');
-  const photos = [
-    { src: 'assets/images/photo1.jpg', cap: 'that one call that lasted till sunrise' },
-    { src: 'assets/images/photo2.jpg', cap: 'the day everything felt easy' },
-    { src: 'assets/images/photo3.jpg', cap: 'you, mid-laugh, my favorite' },
-    { src: 'assets/images/photo4.jpg', cap: 'a memory I keep replaying' },
-    { src: 'assets/images/photo5.jpg', cap: 'still my favorite notification' },
-    { src: 'assets/images/photo6.jpg', cap: 'four months, so many little moments' },
-  ];
-  photos.forEach(p => {
-    const item = document.createElement('div');
-    item.className = 'gallery-item';
-    item.innerHTML = `<img src="${p.src}" alt="${p.cap}" loading="lazy"><div class="cap">${p.cap}</div>`;
-    item.addEventListener('click', () => openLightbox(p.src, p.cap));
-    galleryGrid.appendChild(item);
+  /* ------------------------------------------------------------------ *
+   * 6. MEMORY GALLERY + LIGHTBOX
+   * ------------------------------------------------------------------ */
+  const galleryItems = qsa('.gallery-item');
+  const lightbox = qs('#lightbox');
+  const lightboxImg = qs('#lightbox-img');
+  let currentPhotoIndex = 0;
+  const photoSources = galleryItems.map(item => item.dataset.src);
+
+  function openLightbox(index) {
+    currentPhotoIndex = index;
+    lightboxImg.src = photoSources[index];
+    lightbox.classList.add('active');
+  }
+  function closeLightbox() { lightbox.classList.remove('active'); }
+  function showNextPhoto(dir) {
+    currentPhotoIndex = (currentPhotoIndex + dir + photoSources.length) % photoSources.length;
+    lightboxImg.src = photoSources[currentPhotoIndex];
+  }
+
+  galleryItems.forEach((item, i) => item.addEventListener('click', () => openLightbox(i)));
+  qs('#lightbox-close').addEventListener('click', closeLightbox);
+  qs('#lightbox-prev').addEventListener('click', () => showNextPhoto(-1));
+  qs('#lightbox-next').addEventListener('click', () => showNextPhoto(1));
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox.classList.contains('active')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight') showNextPhoto(1);
+    if (e.key === 'ArrowLeft') showNextPhoto(-1);
   });
 
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImg = document.getElementById('lightboxImg');
-  const lightboxClose = document.getElementById('lightboxClose');
-  function openLightbox(src, alt){
-    lightboxImg.src = src;
-    lightboxImg.alt = alt;
-    lightbox.classList.add('show');
-  }
-  lightboxClose.addEventListener('click', () => lightbox.classList.remove('show'));
-  lightbox.addEventListener('click', (e) => { if(e.target === lightbox) lightbox.classList.remove('show'); });
-
-  /* ------------------------------------------------------------------ */
-  /* LOVE METER GAME — catch falling hearts                              */
-  /* ------------------------------------------------------------------ */
-  const gameStage = document.getElementById('gameStage');
-  const meterFill = document.getElementById('meterFill');
-  const meterLabel = document.getElementById('meterLabel');
-  const gameRestartBtn = document.getElementById('gameRestartBtn');
+  /* ------------------------------------------------------------------ *
+   * 7. LOVE METER MINI-GAME
+   * ------------------------------------------------------------------ */
+  const gameArea = qs('#game-area');
+  const meterFill = qs('#meter-fill');
+  const meterPercent = qs('#meter-percent');
+  const gameWin = qs('#game-win');
+  const gameRestart = qs('#game-restart');
+  const gameSecret = qs('#game-secret');
 
   let meterValue = 0;
-  let gameInterval = null;
+  let gameSpawnTimer = null;
   let gameActive = false;
-  let gameRevealed = false;
+  const HEART_EMOJIS = ['❤️', '💕', '💗', '💖'];
+  const SECRET_MESSAGE = "Every single one of those hearts is a piece of how much I love you — and you caught them all, just like you've caught mine. 4 months down, forever to go.";
 
-  function updateMeter(){
-    meterFill.style.width = meterValue + '%';
-    meterLabel.textContent = meterValue + '%';
-    if(meterValue >= 100 && !gameRevealed){
-      gameRevealed = true;
-      revealLoveMeterMessage();
-    }
-  }
-
-  function revealLoveMeterMessage(){
-    stopGame();
-    const msg = document.createElement('div');
-    msg.className = 'game-message';
-    msg.innerHTML = `You just filled my heart the same way you do every day, just by being you.<br><br>I love you, My Wife-to-be. ❤️`;
-    gameStage.appendChild(msg);
-    requestAnimationFrame(() => msg.classList.add('show'));
-    gameRestartBtn.style.display = 'inline-block';
-  }
-
-  function spawnFallingHeart(){
-    if(!gameActive) return;
+  function spawnFallingHeart() {
+    if (!gameActive) return;
     const heart = document.createElement('button');
     heart.className = 'falling-heart';
-    heart.textContent = '❤️';
-    heart.style.left = (Math.random()*88) + '%';
-    const duration = 3.5 + Math.random()*2.5;
+    heart.textContent = HEART_EMOJIS[randInt(0, HEART_EMOJIS.length - 1)];
+    const areaWidth = gameArea.clientWidth;
+    heart.style.left = randInt(10, Math.max(10, areaWidth - 40)) + 'px';
+    const duration = rand(3.2, 5.5);
     heart.style.animationDuration = duration + 's';
+    gameArea.appendChild(heart);
+
+    const remove = () => heart.remove();
+    heart.addEventListener('animationend', remove);
+
     heart.addEventListener('click', () => {
-      if(!gameActive) return;
-      meterValue = Math.min(100, meterValue + 8);
-      updateMeter();
-      heart.remove();
+      if (heart.classList.contains('heart-pop')) return;
+      heart.classList.add('heart-pop');
+      setTimeout(remove, 350);
+      incrementMeter();
     });
-    gameStage.appendChild(heart);
-    setTimeout(() => heart.remove(), duration*1000 + 100);
   }
 
-  function startGame(){
-    gameActive = true;
-    gameRevealed = false;
-    meterValue = 0;
-    gameRestartBtn.style.display = 'none';
-    gameStage.innerHTML = '';
-    updateMeter();
-    gameInterval = setInterval(spawnFallingHeart, 700);
+  function incrementMeter() {
+    meterValue = Math.min(100, meterValue + randInt(4, 8));
+    meterFill.style.width = meterValue + '%';
+    meterPercent.textContent = meterValue + '%';
+    if (meterValue >= 100) winGame();
   }
-  function stopGame(){
+
+  function winGame() {
     gameActive = false;
-    clearInterval(gameInterval);
-  }
-  gameRestartBtn.addEventListener('click', startGame);
-
-  // Start the game the first time its panel is opened
-  let gameStarted = false;
-  function openPanelWithHooks(id){
-    openPanel(id);
-    if(id === 'game' && !gameStarted){
-      gameStarted = true;
-      startGame();
-    }
-    if(id === 'sky'){
-      buildSky();
-    }
+    clearInterval(gameSpawnTimer);
+    qsa('.falling-heart', gameArea).forEach(h => h.remove());
+    gameSecret.textContent = SECRET_MESSAGE;
+    gameWin.classList.remove('hidden');
+    gameRestart.classList.remove('hidden');
+    launchConfetti();
   }
 
-  /* ------------------------------------------------------------------ */
-  /* LOVE NOTES — 50 unique notes, shuffled bag, no repeats until reset  */
-  /* ------------------------------------------------------------------ */
-  const loveNotes = [
-    "Every morning I wake up grateful that somewhere, you're waking up too, thinking of me the way I think of you.",
-    "My Love, distance is just proof that what we have is strong enough to survive the miles.",
-    "I fall asleep talking to you and wake up smiling because of you. That's not a coincidence, that's us.",
-    "You are the last thing on my mind before I sleep and the first thing I check on when I wake up.",
-    "My Babyy, no bad day survives a single message from you.",
-    "I don't need you in the same room to feel like the luckiest person alive.",
-    "Four months in, and you still make my heart do that stupid little flip.",
-    "Love Love Ko, you turned \"missing you\" into one of my favorite feelings, because it means I get to love you even from far away.",
-    "If loving you from a distance is hard, imagine how much harder it would be not to love you at all.",
-    "My Wife (in training, but I already call you that in my head), you make forever sound like a good idea.",
-    "Every call with you feels like coming home, even when neither of us has left our rooms.",
-    "I count down to our calls the way other people count down to weekends.",
-    "You are my favorite notification.",
-    "My Candy, you make ordinary Tuesdays feel like something worth celebrating.",
-    "I don't just love you. I choose you, every single day, on purpose.",
-    "Somewhere between good morning texts and goodnight calls, you became my favorite part of the day.",
-    "Distance taught me patience, but you taught me why it's worth it.",
-    "My Love, you are the reason my phone battery is always at 12% by noon.",
-    "I could read a thousand of your messages and still want one more.",
-    "You make me believe that love doesn't need proximity, it just needs you.",
-    "Even on my worst days, knowing you exist somewhere out there makes the world feel softer.",
-    "My Babyy, I fall for you a little more every time you laugh at your own jokes.",
-    "If I could send you a hug through the screen, I would send you a thousand.",
-    "Every time you say \"I miss you,\" I hear \"I choose you\" underneath it.",
-    "Love Love Ko, you are proof that some people are just worth the wait.",
-    "I don't do long distance well with anyone else. Just you. Always you.",
-    "You are the softest place my heart has ever landed.",
-    "My Wife, our future doesn't feel far away when I think about how far we've already come.",
-    "I love that even after four months, you still give me butterflies over text.",
-    "You are my favorite person to complain about a bad day to and my favorite person to celebrate a good one with.",
-    "My Candy, being loved by you feels like the safest kind of adventure.",
-    "I don't need a countdown to know that every day gets us closer to no more goodbyes.",
-    "You make \"I love you\" feel brand new every time you say it.",
-    "My Love, thank you for never making distance feel like an excuse to love me less.",
-    "I smile at my phone more than I probably should, and it's always because of you.",
-    "You are the reason I believe timing and distance are no match for the right person.",
-    "Every \"goodnight, love you\" from you is my favorite way to end a day.",
-    "My Babyy, I love you in every time zone, on every bad connection, through every missed call.",
-    "You didn't just enter my life, you made it make more sense.",
-    "Love Love Ko, four months with you already feels like something I'll be grateful for forever.",
-    "I love the version of me that exists when I'm talking to you, softer, happier, more myself.",
-    "My Wife, I already know I want to build a life where we never have to say goodbye after a call again.",
-    "You turned \"I miss you\" into one of the most romantic phrases I know.",
-    "Even miles away, you still manage to be my favorite hello and my hardest goodbye.",
-    "My Candy, you make me want to be patient, present, and better, all at once.",
-    "I don't just wait for you. I look forward to you.",
-    "You are proof that love can grow even when we can't be in the same room to water it.",
-    "My Love, every single day I choose you again, and I will keep choosing you.",
-    "You are the calm in my chaos, even through a screen.",
-    "Four months down, a lifetime to go, and I would not trade this distance-proof love for anything.",
-  ];
-
-  let noteBag = [];
-  function refillBag(){
-    noteBag = loveNotes.map((_, i) => i);
-    for(let i = noteBag.length - 1; i > 0; i--){
-      const j = Math.floor(Math.random()*(i+1));
-      [noteBag[i], noteBag[j]] = [noteBag[j], noteBag[i]];
-    }
+  function resetGame() {
+    meterValue = 0;
+    meterFill.style.width = '0%';
+    meterPercent.textContent = '0%';
+    gameWin.classList.add('hidden');
+    gameRestart.classList.add('hidden');
+    qsa('.falling-heart', gameArea).forEach(h => h.remove());
+    clearInterval(gameSpawnTimer);
+    gameActive = true;
+    gameSpawnTimer = setInterval(spawnFallingHeart, 650);
   }
-  refillBag();
-  let notesShown = 0;
-  const noteText = document.getElementById('noteText');
-  const noteProgress = document.getElementById('noteProgress');
-  const noteCard = document.getElementById('noteCard');
-  document.getElementById('noteBtn').addEventListener('click', () => {
-    if(noteBag.length === 0){
-      refillBag();
-      notesShown = 0;
+
+  gameRestart.addEventListener('click', resetGame);
+
+  /* ------------------------------------------------------------------ *
+   * 8. LOVE NOTES GENERATOR (50+ notes, no repeats until exhausted)
+   * ------------------------------------------------------------------ */
+  const LOVE_NOTES = [
+    "I miss you a little more with every hour that passes today.",
+    "Good morning, my love — you were my last thought before I fell asleep.",
+    "Somewhere out there, you're probably smiling, and it's making my day better too.",
+    "I can't wait for the day video calls become 'come here' instead of 'see you tomorrow.'",
+    "Goodnight, my babyy. Sleep well — I'll be here when you wake up.",
+    "One day we won't need a screen to hold hands. I'm counting down.",
+    "You're the last tab I close and the first thing I check in the morning.",
+    "Distance made me a professional at loving you long-distance. New skill unlocked.",
+    "If missing you burned calories, I'd be the healthiest person alive.",
+    "Every video call with you feels like a mini date, and I never want it to end.",
+    "I dream about the day I get to hold your hand instead of just hearing your voice.",
+    "My candy, you make even the most ordinary Tuesday feel like something worth smiling about.",
+    "I saved a seat next to me today. It was for you, even if you weren't really there.",
+    "You are the reason my phone battery drains so fast — and I regret nothing.",
+    "One day, 'goodnight' will come with a kiss instead of a call ending.",
+    "I love you in every timezone, at every hour, no exceptions.",
+    "Thinking of you isn't something I schedule — it just happens, all day, every day.",
+    "My wife-to-be, I can't wait to build a life where we don't have to say 'talk later.'",
+    "Every 'good morning' text from you is my favorite alarm.",
+    "The distance is temporary. What we're building is not.",
+    "I love loving you, even from this far away.",
+    "You make me want to be patient for something incredible — and that's rare.",
+    "I already know our future dates are going to make up for every missed hug.",
+    "I keep imagining the first time I get to actually hold your hand in person again.",
+    "Even our silence on calls feels like home to me.",
+    "I love you more today than yesterday, and that's saying a lot.",
+    "You're worth every time difference, every delayed reply, every long night waiting for your call.",
+    "One day soon, closing the distance will just mean walking across a room to you.",
+    "My love, being away from you has only ever made me more sure about us.",
+    "I hope you know how loud my heart cheers every time your name pops up on my screen.",
+    "Someday we'll laugh about how many hours we spent staring at each other through a camera.",
+    "You are worth the wait, the time difference, and every mile between us.",
+    "I love you in a way that doesn't need to be in the same room to feel real.",
+    "Good morning, love love ko — I hope today is soft and kind to you.",
+    "I can't wait for a future where 'see you soon' actually means soon.",
+    "Every laugh we share on call is a memory I keep long after we hang up.",
+    "You make long distance feel less like a challenge and more like a promise.",
+    "I hope our future is full of the hand-holding we're saving up right now.",
+    "My candy, even a boring day feels sweeter knowing I get to talk to you.",
+    "I love the version of us that keeps choosing each other, miles apart.",
+    "One day there will be no more 'goodbye,' only 'see you at home.'",
+    "You're the calm in my chaos, even through a phone screen.",
+    "I love you across time zones, screens, and every mile in between.",
+    "The best part of my day is always the part where I get to talk to you.",
+    "I can't wait to trade video calls for actual, real-life hugs.",
+    "Every 'I miss you' text is really just me saying 'I love you' in disguise.",
+    "You're proof that distance is just a test, not an ending.",
+    "My babyy, thank you for making the wait feel worth it.",
+    "I love you enough to be patient for our forever.",
+    "Someday soon, I won't have to imagine holding your hand — I'll just do it.",
+    "Every day with you, even the long-distance ones, is one I'd choose again.",
+    "You're my favorite notification, every single time.",
+    "I love you a little louder every time I miss you a little more.",
+  ];
+
+  let noteDeck = [];
+  let notesGivenCount = 0;
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = randInt(0, i);
+      [a[i], a[j]] = [a[j], a[i]];
     }
-    const idx = noteBag.pop();
-    notesShown++;
-    noteCard.style.opacity = 0;
-    setTimeout(() => {
-      noteText.textContent = loveNotes[idx];
-      noteCard.style.opacity = 1;
-    }, 180);
-    noteProgress.textContent = `note ${notesShown} of ${loveNotes.length}${noteBag.length===0 ? ' — that was all of them, tap again to reshuffle' : ''}`;
-  });
-  noteCard.style.transition = 'opacity 0.2s ease';
+    return a;
+  }
 
-  /* ------------------------------------------------------------------ */
-  /* FLIP CARDS — 30 reasons                                             */
-  /* ------------------------------------------------------------------ */
-  const reasons = [
-    "The way you laugh at your own jokes before you even finish them.",
-    "How you remember tiny details from conversations we had weeks ago.",
-    "The way you say \"good morning\" like it's a love song.",
-    "Your patience with me on days I don't deserve it.",
-    "How you turn ordinary stories into the funniest thing I've heard all week.",
-    "The way you say my name when you're trying to make a point.",
-    "How you still get shy sometimes, even after four months.",
-    "Your voice being the best sound in my day, every single day.",
-    "The way you care about people, even ones you've never met.",
-    "How you never let a call end without saying \"I love you\" first.",
-    "Your stubbornness, which is somehow one of my favorite things about you.",
-    "The way you get excited over small things and never apologize for it.",
-    "How you always ask about my day like it actually matters to you.",
-    "Your ability to make distance feel smaller just by picking up the phone.",
-    "The way you overthink things and then trust me to help you through it.",
-    "How you show up for me even when you're tired.",
-    "Your honesty, even when it's easier to say nothing.",
-    "The way you talk about your dreams like they're already happening.",
-    "How safe I feel telling you literally anything.",
-    "Your soft spot for the things you love, it's adorable, not annoying. Okay, maybe a little.",
-    "The way you say \"I miss you\" like it still surprises you every time.",
-    "How you never make me feel guilty for missing you first.",
-    "Your loyalty, which I never have to question.",
-    "The way you fight for us on hard days instead of giving up.",
-    "How you make plans for our future like they're already promises.",
-    "Your softness with the people and things you love.",
-    "The way you say \"we\" instead of \"I\" when you talk about tomorrow.",
-    "How you still try to impress me, four months in.",
-    "Your laugh, the real one, not the polite one.",
-    "Simply put: you. All of you, every single day.",
+  function refillDeck() { noteDeck = shuffle(LOVE_NOTES); }
+  refillDeck();
+
+  const noteTextEl = qs('#note-text');
+  const noteCountEl = qs('#note-count');
+
+  qs('#note-btn').addEventListener('click', (e) => {
+    rippleEffect(e);
+    if (noteDeck.length === 0) refillDeck();
+    const note = noteDeck.pop();
+    notesGivenCount++;
+    noteTextEl.classList.remove('pop');
+    void noteTextEl.offsetWidth; // restart animation
+    noteTextEl.textContent = note;
+    noteTextEl.classList.add('pop');
+    noteCountEl.textContent = `note ${((notesGivenCount - 1) % LOVE_NOTES.length) + 1} of ${LOVE_NOTES.length} • ${LOVE_NOTES.length} to go through before they repeat`;
+  });
+
+  /* ------------------------------------------------------------------ *
+   * 9. REASONS I LOVE YOU — 30 flip cards
+   * ------------------------------------------------------------------ */
+  const REASONS = [
+    "Your smile — it's honestly my favorite thing on the planet.",
+    "Your kindness, even to people who don't deserve it.",
+    "Your patience with me, especially on my off days.",
+    "The way you support every random idea I have.",
+    "How safe I feel just talking to you about anything.",
+    "The way you say good morning like you mean it.",
+    "How you remember tiny details I mentioned once.",
+    "Your laugh — it's basically my favorite sound.",
+    "The way you make ordinary days feel special.",
+    "How you never make me feel silly for missing you.",
+    "Your honesty, even when it's the harder thing to say.",
+    "The way you fight for us despite the distance.",
+    "How you check in on me without me even asking.",
+    "Your strength on days you don't feel strong.",
+    "The way your voice instantly calms me down.",
+    "How you celebrate my small wins like they're huge.",
+    "Your curiosity about my day, every single day.",
+    "The way you say my name.",
+    "How effortlessly you make me want to be better.",
+    "Your patience during our time-zone gymnastics.",
+    "The way you still get shy sometimes — it's adorable.",
+    "How you never let a fight turn into silence.",
+    "Your loyalty — you've never given me a reason to doubt you.",
+    "The way you plan our future like it's already certain.",
+    "How you make waiting feel worth it.",
+    "Your humor — you make even bad days funny.",
+    "The way you say 'I miss you' like it still surprises you.",
+    "How you show up, call after call, day after day.",
+    "The way you love me in all my inconvenient time zones.",
+    "Simply put — you. All of you, exactly as you are.",
   ];
-  const flipGrid = document.getElementById('flipGrid');
-  reasons.forEach((r, i) => {
-    const card = document.createElement('div');
-    card.className = 'flip-card';
-    card.innerHTML = `
-      <div class="flip-inner">
-        <div class="flip-front">${i+1}</div>
-        <div class="flip-back">${r}</div>
-      </div>`;
-    card.addEventListener('click', () => card.classList.toggle('flipped'));
-    flipGrid.appendChild(card);
-  });
 
-  /* ------------------------------------------------------------------ */
-  /* OUR DISTANCE                                                        */
-  /* ------------------------------------------------------------------ */
-  const distanceStats = [
-    { num: '4', lbl: 'MONTHS TOGETHER', txt: "Four months of choosing each other, on purpose, every single day, no matter the miles between us." },
-    { num: '∞', lbl: 'MESSAGES SENT', txt: "More texts than I could ever count, good mornings, good nights, and everything in between." },
-    { num: 'countless', lbl: 'CALLS', txt: "Calls that turned into hours, hours that turned into some of my favorite memories of this year." },
-    { num: '1', lbl: 'DREAM WE SHARE', txt: "A future with no more goodbyes after a call, just hellos that don't have an end time." },
-  ];
-  const distanceGrid = document.getElementById('distanceGrid');
-  distanceStats.forEach(s => {
-    const card = document.createElement('div');
-    card.className = 'distance-card';
-    card.innerHTML = `<span class="num">${s.num}</span><span class="lbl">${s.lbl}</span><p>${s.txt}</p>`;
-    distanceGrid.appendChild(card);
-  });
+  const flipGrid = qs('#flip-grid');
+  let flipCardsBuilt = false;
 
-  /* ------------------------------------------------------------------ */
-  /* GIFT BOX                                                            */
-  /* ------------------------------------------------------------------ */
-  const giftBox = document.getElementById('giftBox');
-  const giftMessage = document.getElementById('giftMessage');
+  function buildFlipCards() {
+    if (flipCardsBuilt) return;
+    flipCardsBuilt = true;
+    REASONS.forEach((reason, i) => {
+      const card = document.createElement('button');
+      card.className = 'flip-card';
+      card.innerHTML = `
+        <div class="flip-card-inner">
+          <div class="flip-face flip-front"><span class="flip-num">${i + 1}</span></div>
+          <div class="flip-face flip-back">${reason}</div>
+        </div>`;
+      card.addEventListener('click', () => card.classList.toggle('flipped'));
+      flipGrid.appendChild(card);
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
+   * 10. LONG DISTANCE COUNTERS
+   * ------------------------------------------------------------------ */
+  let countersAnimated = false;
+
+  function animateCounters() {
+    if (countersAnimated) return;
+    countersAnimated = true;
+    qsa('.counter-num').forEach(numEl => {
+      const target = parseInt(numEl.dataset.target, 10);
+      const duration = 1400;
+      const start = performance.now();
+      function tick(now) {
+        const progress = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        numEl.textContent = Math.floor(eased * target).toLocaleString();
+        if (progress < 1) requestAnimationFrame(tick);
+        else numEl.textContent = target.toLocaleString();
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
+   * 11. SURPRISE GIFT
+   * ------------------------------------------------------------------ */
+  const giftBox = qs('#gift-box');
+  const giftReveal = qs('#gift-reveal');
   let giftOpened = false;
+
   giftBox.addEventListener('click', () => {
-    if(giftOpened) return;
+    if (giftOpened) return;
     giftOpened = true;
     giftBox.classList.add('opened');
-    launchConfetti();
     setTimeout(() => {
-      giftMessage.textContent = "Surprise, My Candy. This box has nothing inside it except one truth: loving you is the easiest, best decision I keep making, over and over, four months and counting.";
-      giftMessage.classList.add('show');
-    }, 400);
+      giftReveal.classList.remove('hidden');
+      launchConfetti();
+    }, 500);
   });
 
-  function launchConfetti(){
-    const colors = ['#e8b4bc', '#d4a574', '#f7d9dc', '#faf6f2'];
-    for(let i=0;i<60;i++){
-      const piece = document.createElement('div');
-      const size = 6 + Math.random()*6;
-      piece.style.position = 'fixed';
-      piece.style.top = '-20px';
-      piece.style.left = (Math.random()*100) + 'vw';
-      piece.style.width = size + 'px';
-      piece.style.height = size*0.4 + 'px';
-      piece.style.background = colors[Math.floor(Math.random()*colors.length)];
-      piece.style.opacity = '0.9';
-      piece.style.zIndex = '80';
-      piece.style.borderRadius = '2px';
-      piece.style.pointerEvents = 'none';
-      piece.style.transform = `rotate(${Math.random()*360}deg)`;
-      document.body.appendChild(piece);
-      const duration = 2200 + Math.random()*1400;
-      const drift = (Math.random()*160 - 80);
-      piece.animate([
-        { transform: `translate(0,0) rotate(0deg)`, opacity: 0.9 },
-        { transform: `translate(${drift}px, 100vh) rotate(${360 + Math.random()*360}deg)`, opacity: 0.2 }
-      ], { duration, easing: 'ease-in' });
-      setTimeout(() => piece.remove(), duration + 100);
-    }
-  }
-
-  /* ------------------------------------------------------------------ */
-  /* FUTURE DREAMS                                                       */
-  /* ------------------------------------------------------------------ */
-  const dreams = [
-    { title: 'No More Goodbyes', body: "The day video calls turn into \"I'm home,\" and goodbyes stop being something we have to survive." },
-    { title: 'Our First Trip Together', body: "Somewhere neither of us has been, so every memory there belongs only to us." },
-    { title: 'Meeting Everyone, In Person', body: "Your family, my family, all the people who've heard about \"them\" for months, finally seeing us together." },
-    { title: 'A Home With Two Names On It', body: "Nothing fancy. Just a place where your side of the bed is real, not a video call away." },
-    { title: 'Slow Sunday Mornings', body: "No time zones, no \"I have to go,\" just us and coffee and nowhere else to be." },
-    { title: 'Growing Old, Still Choosing You', body: "Same person, same choice, for the rest of our lives." },
+  /* ------------------------------------------------------------------ *
+   * 12. INTERACTIVE NIGHT SKY
+   * ------------------------------------------------------------------ */
+  const STAR_WISHES = [
+    "I wish for the day we never have to say 'talk to you tomorrow' again.",
+    "I wish for a home that's just ours, someday.",
+    "I wish for lazy Sundays with you, in person, no calls needed.",
+    "I wish for every future birthday spent together.",
+    "I wish for the both of us to keep choosing each other, always.",
+    "I wish for a future full of inside jokes we haven't made yet.",
+    "I wish for the trip we keep planning to actually happen.",
+    "I wish for slow mornings where I get to see your real face, not a screen.",
+    "I wish for us to grow old still calling each other silly names.",
+    "I wish for every 'goodnight' to eventually become 'goodnight, I'm right here.'",
+    "I wish for a love that never runs out of good mornings.",
+    "I wish for you to always feel as loved as you make me feel.",
+    "Here's a little secret: you were the best decision these four months made.",
+    "Here's a little secret: I practice what I'll say when I see you next.",
+    "Here's a little secret: your voice is my favorite sound in the world.",
   ];
-  const dreamsGrid = document.getElementById('dreamsGrid');
-  dreams.forEach(d => {
-    const card = document.createElement('div');
-    card.className = 'dream-card';
-    card.innerHTML = `<h3>${d.title}</h3><p>${d.body}</p>`;
-    card.addEventListener('click', () => card.classList.toggle('expanded'));
-    dreamsGrid.appendChild(card);
-  });
 
-  /* ------------------------------------------------------------------ */
-  /* NIGHT SKY                                                           */
-  /* ------------------------------------------------------------------ */
-  const skyMessages = [
-    "I chose you then. I choose you now. I'll choose you tomorrow.",
-    "You're my favorite good morning and my hardest goodnight.",
-    "Somewhere under this same sky, you're thinking of me too.",
-    "Four months. Still counting. Still smiling.",
-    "Distance is just a math problem. My love for you isn't.",
-    "You are worth every missed call and every rescheduled plan.",
-    "One day, this sky won't be the only thing we share.",
-    "My Love, you are the softest kind of home.",
-    "Every star up there has seen me smile at your texts.",
-    "I miss you in a good way, the way that means I get to love you longer.",
-    "You make waiting feel like something worth doing.",
-    "Even the stars can't outshine how I feel about you.",
-  ];
-  const skyStage = document.getElementById('skyStage');
+  const skyArea = qs('#sky-area');
+  const skyMessage = qs('#sky-message');
   let skyBuilt = false;
-  function buildSky(){
-    if(skyBuilt) return;
+
+  function buildNightSky() {
+    if (skyBuilt) return;
     skyBuilt = true;
-    skyMessages.forEach((msg, i) => {
-      const star = document.createElement('div');
+    const positions = [];
+    const starCount = STAR_WISHES.length;
+    for (let i = 0; i < starCount; i++) {
+      const star = document.createElement('button');
       star.className = 'sky-star';
-      const left = 6 + Math.random()*88;
-      const top = 8 + Math.random()*78;
-      star.style.left = left + '%';
+      star.textContent = '✦';
+      const top = randInt(4, 82);
+      const left = randInt(4, 90);
       star.style.top = top + '%';
-      star.style.animationDelay = (Math.random()*2) + 's';
-
-      const bubble = document.createElement('div');
-      bubble.className = 'sky-msg';
-      bubble.textContent = msg;
-      bubble.style.left = left + '%';
-      bubble.style.top = top + '%';
-
+      star.style.left = left + '%';
+      star.style.animationDelay = rand(0, 2) + 's';
       star.addEventListener('click', () => {
-        document.querySelectorAll('.sky-msg.show').forEach(b => { if(b !== bubble) b.classList.remove('show'); });
-        bubble.classList.toggle('show');
+        skyMessage.textContent = STAR_WISHES[i];
+        skyMessage.classList.remove('hidden');
+        void skyMessage.offsetWidth;
       });
-
-      skyStage.appendChild(star);
-      skyStage.appendChild(bubble);
-    });
-    // scatter a handful of tiny non-interactive background stars for atmosphere
-    for(let i=0;i<25;i++){
-      const dot = document.createElement('div');
+      skyArea.appendChild(star);
+    }
+    // sprinkle extra tiny ambient (non-interactive) stars
+    for (let i = 0; i < 40; i++) {
+      const dot = document.createElement('span');
       dot.style.position = 'absolute';
-      dot.style.width = '2px'; dot.style.height = '2px';
+      dot.style.width = dot.style.height = rand(1, 2.5) + 'px';
       dot.style.borderRadius = '50%';
-      dot.style.background = 'rgba(250,246,242,0.5)';
-      dot.style.left = (Math.random()*98) + '%';
-      dot.style.top = (Math.random()*94) + '%';
+      dot.style.background = '#fff';
+      dot.style.opacity = rand(0.2, 0.8);
+      dot.style.top = randInt(0, 95) + '%';
+      dot.style.left = randInt(0, 98) + '%';
       dot.style.pointerEvents = 'none';
-      skyStage.appendChild(dot);
+      skyArea.appendChild(dot);
     }
   }
 
-  /* ------------------------------------------------------------------ */
-  /* MUSIC PLAYER                                                        */
-  /* ------------------------------------------------------------------ */
-  const bgAudio = document.getElementById('bgAudio');
-  const musicToggle = document.getElementById('musicToggle');
-  const musicProgress = document.getElementById('musicProgress');
-  const musicVolume = document.getElementById('musicVolume');
+  /* ------------------------------------------------------------------ *
+   * 13. FINALE SEQUENCE
+   * ------------------------------------------------------------------ */
+  const finaleTextEl = qs('#finale-text');
+  const finaleCanvas = qs('#finale-canvas');
+  const finaleCtx = finaleCanvas.getContext('2d');
+  let finalePlayed = false;
+  let fireflies = [];
 
-  bgAudio.volume = 0.6;
+  const FINALE_LINES = [
+    "My Love.", "My Babyy.", "My Wife.", "Love Love Ko.", "My Candy.",
+    "Four beautiful months.", "A lifetime to go.",
+    "I'll keep choosing you.",
+    "I love you more than words could ever describe."
+  ];
 
-  musicToggle.addEventListener('click', () => {
-    if(bgAudio.paused){
-      bgAudio.play().catch(() => {});
-      musicToggle.textContent = '❚❚';
-    } else {
-      bgAudio.pause();
-      musicToggle.textContent = '▶';
-    }
-  });
+  function resizeFinaleCanvas() {
+    finaleCanvas.width = window.innerWidth;
+    finaleCanvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeFinaleCanvas);
 
-  bgAudio.addEventListener('timeupdate', () => {
-    if(bgAudio.duration){
-      musicProgress.value = (bgAudio.currentTime / bgAudio.duration) * 100;
+  function makeFirefly() {
+    return {
+      x: rand(0, finaleCanvas.width),
+      y: rand(0, finaleCanvas.height),
+      r: rand(1.5, 3),
+      vx: rand(-0.3, 0.3),
+      vy: rand(-0.3, 0.3),
+      phase: rand(0, Math.PI * 2),
+    };
+  }
+
+  function animateFireflies() {
+    if (!qs('[data-screen="finale"]').classList.contains('active')) return;
+    finaleCtx.clearRect(0, 0, finaleCanvas.width, finaleCanvas.height);
+    fireflies.forEach(f => {
+      f.x += f.vx; f.y += f.vy; f.phase += 0.03;
+      if (f.x < 0 || f.x > finaleCanvas.width) f.vx *= -1;
+      if (f.y < 0 || f.y > finaleCanvas.height) f.vy *= -1;
+      const glow = (Math.sin(f.phase) + 1) / 2;
+      finaleCtx.beginPath();
+      finaleCtx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+      finaleCtx.fillStyle = `rgba(255, 217, 200, ${0.2 + glow * 0.6})`;
+      finaleCtx.shadowBlur = 12;
+      finaleCtx.shadowColor = 'rgba(255,217,125,0.8)';
+      finaleCtx.fill();
+    });
+    requestAnimationFrame(animateFireflies);
+  }
+
+  function playFinale() {
+    resizeFinaleCanvas();
+    if (fireflies.length === 0) {
+      for (let i = 0; i < 35; i++) fireflies.push(makeFirefly());
     }
-  });
-  musicProgress.addEventListener('input', () => {
-    if(bgAudio.duration){
-      bgAudio.currentTime = (musicProgress.value / 100) * bgAudio.duration;
+    animateFireflies();
+    if (finalePlayed) return;
+    finalePlayed = true;
+    finaleTextEl.innerHTML = '';
+    let i = 0;
+    function showNextLine() {
+      if (i >= FINALE_LINES.length) return;
+      finaleTextEl.innerHTML = `<span class="line">${FINALE_LINES[i]}</span>`;
+      i++;
+      setTimeout(showNextLine, 2200);
     }
-  });
-  musicVolume.addEventListener('input', () => {
-    bgAudio.volume = musicVolume.value / 100;
-  });
+    setTimeout(showNextLine, 800);
+    setTimeout(launchConfetti, 1200);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * 14. CONFETTI (canvas-based, reusable)
+   * ------------------------------------------------------------------ */
+  const confettiCanvas = qs('#confetti-canvas');
+  const confettiCtx = confettiCanvas.getContext('2d');
+  const CONFETTI_COLORS = ['#FF6FA0', '#C6A4F2', '#FFD97D', '#FFB0CE', '#FFFFFF'];
+
+  function resizeConfettiCanvas() {
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+  }
+  resizeConfettiCanvas();
+  window.addEventListener('resize', resizeConfettiCanvas);
+
+  function launchConfetti() {
+    const pieces = [];
+    const count = 120;
+    for (let i = 0; i < count; i++) {
+      pieces.push({
+        x: rand(0, confettiCanvas.width),
+        y: rand(-40, -confettiCanvas.height * 0.2),
+        size: rand(6, 11),
+        color: CONFETTI_COLORS[randInt(0, CONFETTI_COLORS.length - 1)],
+        speedY: rand(2, 5),
+        speedX: rand(-1.5, 1.5),
+        rotation: rand(0, 360),
+        rotSpeed: rand(-6, 6),
+        shape: Math.random() > 0.5 ? 'heart' : 'square',
+        life: 0,
+      });
+    }
+    let frame = 0;
+    const maxFrames = 220;
+    function tick() {
+      frame++;
+      confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      pieces.forEach(p => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.rotation += p.rotSpeed;
+        confettiCtx.save();
+        confettiCtx.translate(p.x, p.y);
+        confettiCtx.rotate((p.rotation * Math.PI) / 180);
+        confettiCtx.fillStyle = p.color;
+        confettiCtx.globalAlpha = frame > maxFrames - 40 ? Math.max(0, (maxFrames - frame) / 40) : 1;
+        if (p.shape === 'heart') {
+          drawHeart(confettiCtx, 0, 0, p.size, confettiCtx.globalAlpha);
+        } else {
+          confettiCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        }
+        confettiCtx.restore();
+      });
+      if (frame < maxFrames) requestAnimationFrame(tick);
+      else confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    }
+    tick();
+  }
 
 });
