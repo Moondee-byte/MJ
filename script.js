@@ -186,25 +186,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const LETTER = `My Love,
 
-Four months in a blink of an eye. It still amazes me that something that started so simply has grown into one of the best parts of my life.
+Four months in a blink of an eye. Dali ra kayo ang adlaw babyy, it all started when i said "hi" and now dili na makaya ang everyday life kung dili ma dungog,makita or makachat tika. grabe ka inlove. 
 
-Every call means the world to me, even the ones where we don't say much and just stay on the line doing our own thing. I love that we've turned "nothing" into something worth showing up for, every single day.
+Babyy our every call means the world to me, to be loved by you was the greatest gift na na received nako in all my life. Thank you for always choosing to love me every day.
 
-Every message makes my day a little brighter, i mean it, even a random "hello love" from you in the middle of the day has a way of making everything feel lighter.
+Every message makes my day a little brighter, yesss i mean it, even kanang random "hello love" nimo in the middle of the day, nga idk why maka smile rakog kalit hehe. 
 
 Thank you for staying, for choosing this — for choosing us — even when the distance makes it harder than it should be. That means more to me than I know how to say.
 
 I'm proud of what we've built. Proud of how patient we've been with each other, how we keep choosing honesty and effort over giving up when things get hard. Not every love survives distance. Ours is learning how to.
 
-I can't wait for the day we no longer have to end our calls with "byebye baby" — when goodnight means I get to see you, not just hear you. Until then, I'll keep showing up, one call, one message, one monthsary at a time.
+I can't wait for the days nga dili nata maka ingon after sa atong calls og "byebye baby" — and when good night means, i get to see you not through the screen, and dili lang sa ma dunggan tika. Until then babyy, I'll keep showing up, one call, one message, one monthsary at a time.
 
-I'm excited for everything still ahead of us. The plans we've talked about the ones we haven't said out loud yet, the ordinary days we're going to get to finally share in person.
+I'm excited for everything still ahead of us. Ang mga plano nato, og katong mga plano na wala pa na ingon, atong days nga ma spend nato with each other and dili na sa call lang. 
 
-Happy 4th monthsary, my babyy. Thank you for four months of choosing me. Here's to closing the distance, one day at a time — and to a lifetime of never having to say goodbye again.
+Happy 4th monthsary, my babyy. Thank you for four months of choosing me. cheers to us, one day at a time — and to a lifetime of never having to say goodbye again.
 
-I love you. Always.
+Don't forget, im Always Proud of You babyy, I love youuuu. Always.
 
-— Yours, palangga`;
+— Yours, pinaka cute nimong palangga hehe`;
 
   function typeLetter() {
     if (letterTyped) return;
