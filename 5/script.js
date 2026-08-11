@@ -25,9 +25,12 @@ const siteConfig = {
   //   2. Adding a new line below with its filename and an optional caption
   // Remove a photo by deleting its line. Reorder by moving lines up/down.
   photos: [
-    { src: "images/1.jpg", caption: "Our first date ❤️" },
-    { src: "images/2.jpg", caption: "My favorite memory with you" },
-    { src: "images/3.jpg", caption: "" },
+    { src: "images/1.jpg", caption: "Love love 🥹" },
+    { src: "images/2.jpg", caption: "Sooooo pretty🥰" },
+    { src: "images/3.jpg", caption: "Gorgeous😍" },
+    { src: "images/4.jpg", caption: "I love you so much 😘" },
+    { src: "images/5.jpg", caption: "Akong palangga 😍🥰" },
+    { src: "images/6.jpg", caption: "Asawa ko 😘🥰😍" },
   ],
 
   // ----- My Favorite Photos of You -----
