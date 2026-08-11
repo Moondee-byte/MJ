@@ -7,10 +7,10 @@
 const siteConfig = {
 
   // ----- Names & date -----
-  girlfriendName: "HER NAME",
-  myName: "MY NAME",
+  girlfriendName: "Babyy",
+  myName: "Baby",
   months: "5",
-  anniversaryDate: "DATE",                 // e.g. "August 11, 2026" (not shown yet, just here for your reference)
+  anniversaryDate: "August 14, 2026",                 // e.g. "August 11, 2026" (not shown yet, just here for your reference)
 
   // ----- Hero section -----
   heroMessage: "Happy 5 Months, My Love",
@@ -25,9 +25,9 @@ const siteConfig = {
   //   2. Adding a new line below with its filename and an optional caption
   // Remove a photo by deleting its line. Reorder by moving lines up/down.
   photos: [
-    { src: "images/photo1.jpg", caption: "Our first date ❤️" },
-    { src: "images/photo2.jpg", caption: "My favorite memory with you" },
-    { src: "images/photo3.jpg", caption: "" },
+    { src: "images/1.jpg", caption: "Our first date ❤️" },
+    { src: "images/2.jpg", caption: "My favorite memory with you" },
+    { src: "images/3.jpg", caption: "" },
   ],
 
   // ----- My Favorite Photos of You -----
