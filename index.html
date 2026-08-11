@@ -2,241 +2,149 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
-<title>Happy 4th Monthsary, My Love ❤️</title>
-<meta name="description" content="A little interactive world made just for you." />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>For You, Always</title>
+<meta name="description" content="A little love letter of a website." />
 
-<!-- Google Fonts: Dancing Script (romantic display), Quicksand (headings/buttons), Nunito (body) -->
+<!-- Google Fonts: Fraunces (display), Public Sans (body), Caveat (handwritten accent) -->
+<!-- If these fail to load, the site falls back to clean system fonts automatically. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Public+Sans:wght@400;500;600&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<!-- ================= AMBIENT BACKGROUND ================= -->
-<canvas id="hearts-bg" aria-hidden="true"></canvas>
-<div class="glow-orb orb1" aria-hidden="true"></div>
-<div class="glow-orb orb2" aria-hidden="true"></div>
-<div class="glow-orb orb3" aria-hidden="true"></div>
+<!-- Floating hearts / ambient decoration layer (filled by script.js) -->
+<div class="ambient-layer" id="ambientLayer" aria-hidden="true"></div>
 
-<!-- ================= MUSIC ================= -->
-<audio id="bg-music" src="music.mp3" loop preload="auto"></audio>
-<button id="music-toggle" class="music-toggle" aria-label="Mute or unmute background music" title="Our song">
-  <span id="music-icon">🎵</span>
+<!-- Thread that runs down the page, stitched through each section like a garland -->
+<div class="thread-line" aria-hidden="true"></div>
+
+<!-- ============ MUSIC BUTTON (optional) ============ -->
+<!-- Put your song at music/our-song.mp3 — this button just plays/pauses it. -->
+<button class="music-toggle" id="musicToggle" aria-label="Play our song" aria-pressed="false">
+  <span class="music-icon">♪</span>
 </button>
-<div id="tap-hint" class="tap-hint">Tap anywhere to start our background music 🎵</div>
+<audio id="bgMusic" loop preload="none">
+  <source src="music/our-song.mp3" type="audio/mpeg" />
+</audio>
 
-<!-- ================= HOME SCREEN ================= -->
-<section id="home-screen" class="screen active" data-screen="home">
-  <div class="home-content">
-    <p class="eyebrow">✨ a little world, just for you ✨</p>
-    <h1 class="hero-title">Happy 4th<br>Monthsary <span class="beating-heart">❤️</span></h1>
-    <p class="hero-subtitle">Distance has never stopped my heart from choosing you.</p>
-    <button id="start-btn" class="btn-glow">
-      <span>Start Exploring</span> <span class="btn-heart">❤️</span>
-    </button>
+<!-- ============ 1. HERO ============ -->
+<section class="section hero" id="hero">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <p class="eyebrow" data-reveal>a little site, just for you</p>
+  <h1 class="hero-title" data-reveal>
+    <span id="heroHeadline">Happy 5 Months, My Love</span> <span class="heart-mark">❤</span>
+  </h1>
+  <p class="hero-subtitle" data-reveal id="heroSubtitle">
+    five months of you, and I still can't believe my luck.
+  </p>
+  <button class="btn-primary" id="openStoryBtn" data-reveal>
+    Open Our Story <span aria-hidden="true">❤</span>
+  </button>
+  <div class="scroll-hint" aria-hidden="true">
+    <span></span>
   </div>
 </section>
 
-<!-- ================= MENU SCREEN ================= -->
-<section id="menu-screen" class="screen" data-screen="menu">
-  <div class="menu-inner">
-    <p class="eyebrow">for my babyy 🥹</p>
-    <h2 class="menu-title">Pick a little surprise</h2>
-    <p class="menu-subtitle">Explore them in any order you like, love love ko 💕</p>
-    <div class="menu-grid">
-      <button class="menu-card" data-panel="letter" style="--i:0">
-        <span class="menu-icon">💌</span>
-        <span class="menu-label">Love Letter</span>
-      </button>
-      <button class="menu-card" data-panel="gallery" style="--i:1">
-        <span class="menu-icon">📸</span>
-        <span class="menu-label">Memory Gallery</span>
-      </button>
-      <button class="menu-card" data-panel="game" style="--i:2">
-        <span class="menu-icon">💗</span>
-        <span class="menu-label">Love Meter</span>
-      </button>
-      <button class="menu-card" data-panel="notes" style="--i:3">
-        <span class="menu-icon">💕</span>
-        <span class="menu-label">Love Notes</span>
-      </button>
-      <button class="menu-card" data-panel="reasons" style="--i:4">
-        <span class="menu-icon">🌸</span>
-        <span class="menu-label">Reasons I Love You</span>
-      </button>
-      <button class="menu-card" data-panel="distance" style="--i:5">
-        <span class="menu-icon">🌍</span>
-        <span class="menu-label">Long Distance, Big Love</span>
-      </button>
-      <button class="menu-card" data-panel="gift" style="--i:6">
-        <span class="menu-icon">🎁</span>
-        <span class="menu-label">Surprise Gift</span>
-      </button>
-      <button class="menu-card" data-panel="sky" style="--i:7">
-        <span class="menu-icon">🌌</span>
-        <span class="menu-label">Our Night Sky</span>
-      </button>
-      <button class="menu-card menu-card-finale" data-panel="finale" style="--i:8">
-        <span class="menu-icon">💖</span>
-        <span class="menu-label">One Last Thing</span>
-      </button>
-    </div>
-  </div>
+<!-- ============ 2. OUR STORY ============ -->
+<section class="section story" id="story">
+  <p class="eyebrow" data-reveal>chapter one</p>
+  <h2 class="section-title" data-reveal>Our Story</h2>
+  <!-- ✏️ EDIT ME: Replace the paragraph below in index.html (or leave it — 
+       it's also editable from siteConfig.storyText in script.js) -->
+  <p class="story-text" id="storyText" data-reveal>
+    Five months may sound like a short time, but somehow you've become such a
+    beautiful part of my life. Every ordinary day feels a little softer, a
+    little brighter, simply because you're in it. I don't know exactly when
+    it happened — maybe it was gradual, maybe it was instant — but somewhere
+    between our first conversation and right now, you became my favorite
+    person to tell things to.
+  </p>
 </section>
 
-<!-- ================= PANEL: LOVE LETTER ================= -->
-<section id="panel-letter" class="screen panel" data-screen="letter">
-  <button class="back-btn" data-back>← Back</button>
-  <div class="panel-inner letter-inner">
-    <h2 class="panel-title">💌 Letter love ohh hehe 🤭 </h2>
-    <div id="envelope" class="envelope">
-      <div class="envelope-back"></div>
-      <div class="envelope-letter" id="envelope-letter">
-        <p id="letter-text" class="letter-text"></p>
-      </div>
-      <div class="envelope-flap"></div>
-      <div class="envelope-front"></div>
-      <p class="envelope-hint">tap to open ❤️</p>
-    </div>
-  </div>
+<!-- ============ 3. PHOTO MEMORIES ============ -->
+<section class="section gallery-section" id="gallery">
+  <p class="eyebrow" data-reveal>chapter two</p>
+  <h2 class="section-title" data-reveal>Photo Memories</h2>
+  <p class="section-subtitle" data-reveal>tap any photo to see it up close</p>
+
+  <!-- Gallery cards are generated automatically from the `photos` array
+       in script.js — you never need to edit this HTML. -->
+  <div class="gallery-grid" id="galleryGrid"></div>
 </section>
 
-<!-- ================= PANEL: MEMORY GALLERY ================= -->
-<section id="panel-gallery" class="screen panel" data-screen="gallery">
-  <button class="back-btn" data-back>← Back</button>
-  <div class="panel-inner">
-    <h2 class="panel-title">📸 My Gorgeous Wife</h2>
-    <p class="panel-sub">Soooo pretty😍💕</p>
-    <div class="gallery-grid" id="gallery-grid">
-      <button class="gallery-item" data-src="photo1.jpg"><img src="photo1.jpg" alt="Memory 1" loading="lazy"></button>
-      <button class="gallery-item" data-src="photo2.jpg"><img src="photo2.jpg" alt="Memory 2" loading="lazy"></button>
-      <button class="gallery-item" data-src="photo3.jpg"><img src="photo3.jpg" alt="Memory 3" loading="lazy"></button>
-      <button class="gallery-item" data-src="photo4.jpg"><img src="photo4.jpg" alt="Memory 4" loading="lazy"></button>
-      <button class="gallery-item" data-src="photo5.jpg"><img src="photo5.jpg" alt="Memory 5" loading="lazy"></button>
-      <button class="gallery-item" data-src="photo6.jpg"><img src="photo6.jpg" alt="Memory 6" loading="lazy"></button>
-    </div>
+<!-- Lightbox / full-screen photo viewer -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close photo">✕</button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous photo">‹</button>
+  <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next photo">›</button>
+  <div class="lightbox-content">
+    <img id="lightboxImg" src="" alt="" />
+    <p class="lightbox-caption" id="lightboxCaption"></p>
   </div>
-</section>
-
-<!-- ================= PANEL: LOVE METER GAME ================= -->
-<section id="panel-game" class="screen panel" data-screen="game">
-  <button class="back-btn" data-back>← Back</button>
-  <div class="panel-inner">
-    <h2 class="panel-title">💕 Catch My Heart</h2>
-    <p class="panel-sub">Catch all of my love babyy 🥰</p>
-    <div class="meter-wrap">
-      <div class="meter-bar"><div id="meter-fill" class="meter-fill"></div></div>
-      <span id="meter-percent" class="meter-percent">0%</span>
-    </div>
-    <div id="game-area" class="game-area">
-      <button id="game-restart" class="btn-glow btn-small hidden">Play Again</button>
-      <div id="game-win" class="game-win hidden">
-        <p class="win-title">You caught every piece of my heart 🥰🩷</p>
-        <p id="game-secret" class="win-secret"></p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= PANEL: LOVE NOTES ================= -->
-<section id="panel-notes" class="screen panel" data-screen="notes">
-  <button class="back-btn" data-back>← Back</button>
-  <div class="panel-inner">
-    <h2 class="panel-title">💕 A Note For Today</h2>
-    <p class="panel-sub">tap the button whenever you need a little reminder</p>
-    <div class="note-card" id="note-card">
-      <p id="note-text" class="note-text">tap below for your first note 🤍</p>
-    </div>
-    <button id="note-btn" class="btn-glow">Give Me A Love Note</button>
-    <p id="note-count" class="note-count"></p>
-  </div>
-</section>
-
-<!-- ================= PANEL: REASONS I LOVE YOU ================= -->
-<section id="panel-reasons" class="screen panel" data-screen="reasons">
-  <button class="back-btn" data-back>← Back</button>
-  <div class="panel-inner">
-    <h2 class="panel-title">🌸 Reasons I Love You</h2>
-    <p class="panel-sub">tap each card, love — gamay lang na hehe</p>
-    <div class="flip-grid" id="flip-grid"></div>
-  </div>
-</section>
-
-<!-- ================= PANEL: LONG DISTANCE ================= -->
-<section id="panel-distance" class="screen panel" data-screen="distance">
-  <button class="back-btn" data-back>← Back</button>
-  <div class="panel-inner">
-    <h2 class="panel-title">🌍 Long Distance, Big Love</h2>
-    <p class="panel-sub">love was never measured in kilometers</p>
-    <div class="counter-grid" id="counter-grid">
-      <div class="counter-card"><span class="counter-num" data-target="1280">0</span><span class="counter-label">Messages Shared ❤️</span></div>
-      <div class="counter-card"><span class="counter-num" data-target="96">0</span><span class="counter-label">Calls Survived 📞</span></div>
-      <div class="counter-card"><span class="counter-num" data-target="4">0</span><span class="counter-label">Months Together ❤️</span></div>
-      <div class="counter-card"><span class="counter-num" data-target="58">0</span><span class="counter-label">Dreams Shared 🌙</span></div>
-      <div class="counter-card"><span class="counter-num" data-target="742">0</span><span class="counter-label">Laughs Together 😂</span></div>
-      <div class="counter-card"><span class="counter-num" data-target="9999">0</span><span class="counter-label">Future Memories Waiting ✨</span></div>
-    </div>
-    <p class="distance-note">No matter how many miles are in between, my heart commutes there every single day. Distance is just something we're turning into a really good story.</p>
-  </div>
-</section>
-
-<!-- ================= PANEL: SURPRISE GIFT ================= -->
-<section id="panel-gift" class="screen panel" data-screen="gift">
-  <button class="back-btn" data-back>← Back</button>
-  <div class="panel-inner">
-    <h2 class="panel-title">🎁 A Little Surprise</h2>
-    <p class="panel-sub">go on, pull the ribbon</p>
-    <div id="gift-box" class="gift-box">
-      <div class="gift-lid">
-        <div class="ribbon-v"></div>
-        <div class="ribbon-h"></div>
-        <div class="bow">🎀</div>
-      </div>
-      <div class="gift-base">
-        <div class="ribbon-v-base"></div>
-      </div>
-      <div class="gift-glow"></div>
-    </div>
-    <div id="gift-reveal" class="gift-reveal hidden">
-      <p class="gift-message">This gift box is empty because the real surprise is every ordinary day you choose to stay, across all these miles, with me. Consider this your official, unlimited-use coupon for one kiss — redeemable in person, no expiration date. 🩷</p>
-    </div>
-  </div>
-</section>
-
-<!-- ================= PANEL: NIGHT SKY ================= -->
-<section id="panel-sky" class="screen panel panel-dark" data-screen="sky">
-  <button class="back-btn back-btn-light" data-back>← Back</button>
-  <div class="panel-inner sky-inner">
-    <h2 class="panel-title title-light">🌌 Our Night Sky</h2>
-    <p class="panel-sub sub-light">tap a star, love</p>
-    <div id="sky-area" class="sky-area"></div>
-    <div id="sky-message" class="sky-message hidden"></div>
-  </div>
-</section>
-
-<!-- ================= PANEL: FINALE ================= -->
-<section id="panel-finale" class="screen panel panel-dark" data-screen="finale">
-  <button class="back-btn back-btn-light" data-back>← Back</button>
-  <div class="panel-inner finale-inner">
-    <canvas id="finale-canvas"></canvas>
-    <div class="finale-heart" id="finale-heart">❤️</div>
-    <div id="finale-text" class="finale-text"></div>
-  </div>
-</section>
-
-<!-- ================= LIGHTBOX ================= -->
-<div id="lightbox" class="lightbox">
-  <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
-  <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous">‹</button>
-  <img id="lightbox-img" src="" alt="Memory" />
-  <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next">›</button>
 </div>
 
-<!-- confetti canvas, sits above everything -->
-<canvas id="confetti-canvas" aria-hidden="true"></canvas>
+<!-- ============ 4. LOVE LETTER ============ -->
+<section class="section letter-section" id="letter">
+  <p class="eyebrow" data-reveal>chapter three</p>
+  <h2 class="section-title" data-reveal>A Little Letter for You…</h2>
+  <div class="letter-paper" data-reveal>
+    <!-- ✏️ EDIT ME: this is also siteConfig.loveLetter in script.js -->
+    <p id="loveLetterText">
+      My love, if you're reading this, it means you found the little world I
+      made for you. I wanted a place, outside of texts and calls, where I
+      could say everything I mean without running out of characters. Thank
+      you for these five months — for your patience, your laugh, the way you
+      make small moments feel like the whole point. I promise to keep
+      choosing you, on the easy days and the hard ones.
+    </p>
+    <p class="letter-signoff" id="loveLetterSignoff">— always yours</p>
+  </div>
+</section>
+
+<!-- ============ 5. FIVE THINGS I LOVE ABOUT YOU ============ -->
+<section class="section reasons-section" id="reasons">
+  <p class="eyebrow" data-reveal>chapter four</p>
+  <h2 class="section-title" data-reveal>5 Things I Love About You</h2>
+  <!-- Cards are generated from siteConfig.reasons in script.js -->
+  <div class="reasons-list" id="reasonsList"></div>
+</section>
+
+<!-- ============ 6. TIMELINE ============ -->
+<section class="section timeline-section" id="timeline">
+  <p class="eyebrow" data-reveal>chapter five</p>
+  <h2 class="section-title" data-reveal>Our Special Moments</h2>
+  <!-- Timeline entries are generated from siteConfig.timeline in script.js -->
+  <div class="timeline-list" id="timelineList"></div>
+</section>
+
+<!-- ============ 7. FINAL MESSAGE ============ -->
+<section class="section finale" id="finale">
+  <div class="finale-glow" aria-hidden="true"></div>
+  <p class="eyebrow eyebrow-light" data-reveal>the last chapter (for now)</p>
+  <h2 class="finale-title" data-reveal>Five months down.<br />Hopefully, a lifetime to go.</h2>
+  <p class="finale-text" data-reveal id="finaleIntro">
+    Every month with you has felt like its own small chapter, and I can't
+    wait to keep writing this story with you.
+  </p>
+
+  <button class="btn-secondary" id="oneMoreThingBtn" data-reveal>One More Thing ❤</button>
+
+  <div class="final-reveal" id="finalReveal" aria-hidden="true">
+    <!-- ✏️ EDIT ME: also siteConfig.finalMessage in script.js -->
+    <p id="finalMessageText">
+      I love you more today than yesterday, and probably not as much as
+      tomorrow. Happy 5 months, my love. Here's to every month after this
+      one.
+    </p>
+    <p class="finale-names" id="finaleNames">— from your person, always</p>
+  </div>
+
+  <p class="footer-note">made with ❤ for you</p>
+</section>
 
 <script src="script.js"></script>
 </body>
