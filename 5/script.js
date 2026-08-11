@@ -30,6 +30,15 @@ const siteConfig = {
     { src: "images/photo3.jpg", caption: "" },
   ],
 
+  // ----- My Favorite Photos of You -----
+  // A separate gallery, just for the pictures of her you love most.
+  // Same rules as "photos" above: add the file to images/, then add a line here.
+  favoritePhotos: [
+    { src: "images/favorite1.jpg", caption: "This one, always" },
+    { src: "images/favorite2.jpg", caption: "" },
+    { src: "images/favorite3.jpg", caption: "" },
+  ],
+
   // ----- Love Letter -----
   loveLetter: "My love, if you're reading this, it means you found the little world I made for you. I wanted a place, outside of texts and calls, where I could say everything I mean without running out of characters. Thank you for these five months — for your patience, your laugh, the way you make small moments feel like the whole point. I promise to keep choosing you, on the easy days and the hard ones.",
   loveLetterSignoff: "— always yours",
@@ -90,22 +99,27 @@ const siteConfig = {
   setText("finaleNames", siteConfig.finaleNames);
   document.title = `For ${siteConfig.girlfriendName}, With Love`;
 
-  /* ---------- Build the photo gallery ---------- */
-  const galleryGrid = document.getElementById("galleryGrid");
-  const photos = Array.isArray(siteConfig.photos) ? siteConfig.photos : [];
+  /* ---------- Build a photo gallery (used for both galleries on the page) ---------- */
+  // Renders `photosArray` into the grid at `gridId`, and wires each card to
+  // open the lightbox scoped to that same array — so the two galleries
+  // (Photo Memories and Favorite Photos) browse independently of each other.
+  function buildGallery(gridId, photosArray, emptyHint) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
 
-  if (photos.length === 0) {
-    galleryGrid.innerHTML = `<p class="gallery-empty-note">Add photos in script.js → siteConfig.photos to see them here.</p>`;
-  } else {
-    photos.forEach((photo, index) => {
+    if (photosArray.length === 0) {
+      grid.innerHTML = `<p class="gallery-empty-note">${emptyHint}</p>`;
+      return;
+    }
+
+    photosArray.forEach((photo, index) => {
       const card = document.createElement("button");
       card.className = "gallery-card";
       card.setAttribute("aria-label", photo.caption || `Photo ${index + 1}`);
-      card.dataset.index = String(index);
 
       const img = document.createElement("img");
       img.src = photo.src;
-      img.alt = photo.caption || `Memory photo ${index + 1}`;
+      img.alt = photo.caption || `Photo ${index + 1}`;
       img.loading = "lazy";
       // If an image file is missing, quietly swap in a placeholder heart
       // instead of showing a broken-image icon.
@@ -121,22 +135,30 @@ const siteConfig = {
         card.appendChild(cap);
       }
 
-      card.addEventListener("click", () => openLightbox(index));
-      galleryGrid.appendChild(card);
+      card.addEventListener("click", () => openLightbox(photosArray, index));
+      grid.appendChild(card);
     });
   }
 
-  /* ---------- Lightbox ---------- */
+  const photos = Array.isArray(siteConfig.photos) ? siteConfig.photos : [];
+  const favoritePhotos = Array.isArray(siteConfig.favoritePhotos) ? siteConfig.favoritePhotos : [];
+
+  buildGallery("galleryGrid", photos, "Add photos in script.js → siteConfig.photos to see them here.");
+  buildGallery("favoritesGrid", favoritePhotos, "Add photos in script.js → siteConfig.favoritePhotos to see them here.");
+
+  /* ---------- Lightbox (shared by both galleries) ---------- */
   const lightbox = document.getElementById("lightbox");
   const lightboxImg = document.getElementById("lightboxImg");
   const lightboxCaption = document.getElementById("lightboxCaption");
   const lightboxClose = document.getElementById("lightboxClose");
   const lightboxPrev = document.getElementById("lightboxPrev");
   const lightboxNext = document.getElementById("lightboxNext");
+  let activeGallery = [];
   let currentPhotoIndex = 0;
 
-  function openLightbox(index) {
-    if (photos.length === 0) return;
+  function openLightbox(photosArray, index) {
+    if (!photosArray || photosArray.length === 0) return;
+    activeGallery = photosArray;
     currentPhotoIndex = index;
     renderLightbox();
     lightbox.classList.add("is-open");
@@ -149,20 +171,20 @@ const siteConfig = {
     document.body.style.overflow = "";
   }
   function renderLightbox() {
-    const photo = photos[currentPhotoIndex];
+    const photo = activeGallery[currentPhotoIndex];
     lightboxImg.src = photo.src;
     lightboxImg.alt = photo.caption || "";
     lightboxCaption.textContent = photo.caption || "";
-    const multiple = photos.length > 1;
+    const multiple = activeGallery.length > 1;
     lightboxPrev.style.display = multiple ? "flex" : "none";
     lightboxNext.style.display = multiple ? "flex" : "none";
   }
   function showNext() {
-    currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+    currentPhotoIndex = (currentPhotoIndex + 1) % activeGallery.length;
     renderLightbox();
   }
   function showPrev() {
-    currentPhotoIndex = (currentPhotoIndex - 1 + photos.length) % photos.length;
+    currentPhotoIndex = (currentPhotoIndex - 1 + activeGallery.length) % activeGallery.length;
     renderLightbox();
   }
 
