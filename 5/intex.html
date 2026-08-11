@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>For You, Always</title>
+<meta name="description" content="A little love letter of a website." />
+
+<!-- Google Fonts: Fraunces (display), Public Sans (body), Caveat (handwritten accent) -->
+<!-- If these fail to load, the site falls back to clean system fonts automatically. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Public+Sans:wght@400;500;600&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- Floating hearts / ambient decoration layer (filled by script.js) -->
+<div class="ambient-layer" id="ambientLayer" aria-hidden="true"></div>
+
+<!-- Thread that runs down the page, stitched through each section like a garland -->
+<div class="thread-line" aria-hidden="true"></div>
+
+<!-- ============ MUSIC BUTTON (optional) ============ -->
+<!-- Put your song at music/our-song.mp3 — this button just plays/pauses it. -->
+<button class="music-toggle" id="musicToggle" aria-label="Play our song" aria-pressed="false">
+  <span class="music-icon">♪</span>
+</button>
+<audio id="bgMusic" loop preload="none">
+  <source src="music/our-song.mp3" type="audio/mpeg" />
+</audio>
+
+<!-- ============ 1. HERO ============ -->
+<section class="section hero" id="hero">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <p class="eyebrow" data-reveal>a little site, just for you</p>
+  <h1 class="hero-title" data-reveal>
+    <span id="heroHeadline">Happy 5 Months, My Love</span> <span class="heart-mark">❤</span>
+  </h1>
+  <p class="hero-subtitle" data-reveal id="heroSubtitle">
+    five months of you, and I still can't believe my luck.
+  </p>
+  <button class="btn-primary" id="openStoryBtn" data-reveal>
+    Open Our Story <span aria-hidden="true">❤</span>
+  </button>
+  <div class="scroll-hint" aria-hidden="true">
+    <span></span>
+  </div>
+</section>
+
+<!-- ============ 2. OUR STORY ============ -->
+<section class="section story" id="story">
+  <p class="eyebrow" data-reveal>chapter one</p>
+  <h2 class="section-title" data-reveal>Our Story</h2>
+  <!-- ✏️ EDIT ME: Replace the paragraph below in index.html (or leave it — 
+       it's also editable from siteConfig.storyText in script.js) -->
+  <p class="story-text" id="storyText" data-reveal>
+    Five months may sound like a short time, but somehow you've become such a
+    beautiful part of my life. Every ordinary day feels a little softer, a
+    little brighter, simply because you're in it. I don't know exactly when
+    it happened — maybe it was gradual, maybe it was instant — but somewhere
+    between our first conversation and right now, you became my favorite
+    person to tell things to.
+  </p>
+</section>
+
+<!-- ============ 3. PHOTO MEMORIES ============ -->
+<section class="section gallery-section" id="gallery">
+  <p class="eyebrow" data-reveal>chapter two</p>
+  <h2 class="section-title" data-reveal>Photo Memories</h2>
+  <p class="section-subtitle" data-reveal>tap any photo to see it up close</p>
+
+  <!-- Gallery cards are generated automatically from the `photos` array
+       in script.js — you never need to edit this HTML. -->
+  <div class="gallery-grid" id="galleryGrid"></div>
+</section>
+
+<!-- Lightbox / full-screen photo viewer -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close photo">✕</button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous photo">‹</button>
+  <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next photo">›</button>
+  <div class="lightbox-content">
+    <img id="lightboxImg" src="" alt="" />
+    <p class="lightbox-caption" id="lightboxCaption"></p>
+  </div>
+</div>
+
+<!-- ============ 4. LOVE LETTER ============ -->
+<section class="section letter-section" id="letter">
+  <p class="eyebrow" data-reveal>chapter three</p>
+  <h2 class="section-title" data-reveal>A Little Letter for You…</h2>
+  <div class="letter-paper" data-reveal>
+    <!-- ✏️ EDIT ME: this is also siteConfig.loveLetter in script.js -->
+    <p id="loveLetterText">
+      My love, if you're reading this, it means you found the little world I
+      made for you. I wanted a place, outside of texts and calls, where I
+      could say everything I mean without running out of characters. Thank
+      you for these five months — for your patience, your laugh, the way you
+      make small moments feel like the whole point. I promise to keep
+      choosing you, on the easy days and the hard ones.
+    </p>
+    <p class="letter-signoff" id="loveLetterSignoff">— always yours</p>
+  </div>
+</section>
+
+<!-- ============ 5. FIVE THINGS I LOVE ABOUT YOU ============ -->
+<section class="section reasons-section" id="reasons">
+  <p class="eyebrow" data-reveal>chapter four</p>
+  <h2 class="section-title" data-reveal>5 Things I Love About You</h2>
+  <!-- Cards are generated from siteConfig.reasons in script.js -->
+  <div class="reasons-list" id="reasonsList"></div>
+</section>
+
+<!-- ============ 6. TIMELINE ============ -->
+<section class="section timeline-section" id="timeline">
+  <p class="eyebrow" data-reveal>chapter five</p>
+  <h2 class="section-title" data-reveal>Our Special Moments</h2>
+  <!-- Timeline entries are generated from siteConfig.timeline in script.js -->
+  <div class="timeline-list" id="timelineList"></div>
+</section>
+
+<!-- ============ 7. FINAL MESSAGE ============ -->
+<section class="section finale" id="finale">
+  <div class="finale-glow" aria-hidden="true"></div>
+  <p class="eyebrow eyebrow-light" data-reveal>the last chapter (for now)</p>
+  <h2 class="finale-title" data-reveal>Five months down.<br />Hopefully, a lifetime to go.</h2>
+  <p class="finale-text" data-reveal id="finaleIntro">
+    Every month with you has felt like its own small chapter, and I can't
+    wait to keep writing this story with you.
+  </p>
+
+  <button class="btn-secondary" id="oneMoreThingBtn" data-reveal>One More Thing ❤</button>
+
+  <div class="final-reveal" id="finalReveal" aria-hidden="true">
+    <!-- ✏️ EDIT ME: also siteConfig.finalMessage in script.js -->
+    <p id="finalMessageText">
+      I love you more today than yesterday, and probably not as much as
+      tomorrow. Happy 5 months, my love. Here's to every month after this
+      one.
+    </p>
+    <p class="finale-names" id="finaleNames">— from your person, always</p>
+  </div>
+
+  <p class="footer-note">made with ❤ for you</p>
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>
