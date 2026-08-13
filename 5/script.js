@@ -37,9 +37,12 @@ const siteConfig = {
   // A separate gallery, just for the pictures of her you love most.
   // Same rules as "photos" above: add the file to images/, then add a line here.
   favoritePhotos: [
-    { src: "images/favorite1.jpg", caption: "This one, always" },
-    { src: "images/favorite2.jpg", caption: "" },
-    { src: "images/favorite3.jpg", caption: "" },
+    { src: "images/photo1.jpg", caption: "I love your eyes baby 🥰" },
+    { src: "images/grad.jpg", caption: "I'm sooo proud palangga 😘" },
+    { src: "images/glass.jpg", caption: "Glasses really suits you my love 😍" },
+    { src: "images/1-1.jpg", caption: "got my eyes like 😍" },
+    { src: "images/queen.jpg", caption: "My queen,The prettiest of all 😘🥰😍" },
+    { src: "images/Hot.jpg", caption: "Of course i can't forget about this 😏" },
   ],
 
   // ----- Love Letter -----
@@ -70,7 +73,7 @@ const siteConfig = {
   // ----- Final section -----
   finaleIntro: "Every month with you has felt like its own small chapter, and I can't wait to keep writing this story with you.",
   finalMessage: "I love you more today than yesterday. Happy 5 months, my love. Here's to every month after this one.",
-  finaleNames: "— from your person, always",
+  finaleNames: "— from your baby, i love you always",
 
   // ----- Music -----
   // Put your song file at music/our-song.mp3 — leave as is if you don't
