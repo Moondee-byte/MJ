@@ -43,8 +43,8 @@ const siteConfig = {
   ],
 
   // ----- Love Letter -----
-  loveLetter: "My love, if you're reading this, it means you found the little world I made for you. I wanted a place, outside of texts and calls, where I could say everything I mean without running out of characters. Thank you for these five months — for your patience, your laugh, the way you make small moments feel like the whole point. I promise to keep choosing you, on the easy days and the hard ones.",
-  loveLetterSignoff: "— always yours",
+  loveLetter: "My love, if you're reading this, it means you found the little world I made for you. I wanted a place, outside of texts and calls, where I could say everything I mean without running out of characters. Thank you for these five months — for your patience, your laugh, the way you make small moments feel like the whole point. Thank you for being you, My baby these words can't describe how proud i am of you and how much i love you, I promise to keep choosing you, on the easy days and the hard ones.",
+  loveLetterSignoff: "— your baby always 🥹",
 
   // ----- 5 Things I Love About You -----
   // Add, remove, or reorder lines freely — the list resizes itself.
