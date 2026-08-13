@@ -49,11 +49,12 @@ const siteConfig = {
   // ----- 5 Things I Love About You -----
   // Add, remove, or reorder lines freely — the list resizes itself.
   reasons: [
-    "Your smile ❤️",
-    "The way you make me laugh",
-    "Your kindness",
-    "The little things you do",
-    "Simply being you",
+    "Your smile the best ever 🥹",
+    "Those eyes of yours that pull me in 😍",
+    "Your kindness 🥰",
+    "The way you show your love 😏🤭"
+    "The little things you do😘",
+    "Simply being you my love😘🥰😍",
   ],
 
   // ----- Timeline -----
@@ -68,7 +69,7 @@ const siteConfig = {
 
   // ----- Final section -----
   finaleIntro: "Every month with you has felt like its own small chapter, and I can't wait to keep writing this story with you.",
-  finalMessage: "I love you more today than yesterday, and probably not as much as tomorrow. Happy 5 months, my love. Here's to every month after this one.",
+  finalMessage: "I love you more today than yesterday. Happy 5 months, my love. Here's to every month after this one.",
   finaleNames: "— from your person, always",
 
   // ----- Music -----
