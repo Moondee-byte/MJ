@@ -55,7 +55,7 @@ const siteConfig = {
     "Your smile the best ever 🥹",
     "Those eyes of yours that pull me in 😍",
     "Your kindness 🥰",
-    "The way you show your love 😏🤭"
+    "The way you show your love 😏🤭", 
     "The little things you do😘",
     "Simply being you my love😘🥰😍",
   ],
