@@ -46,7 +46,7 @@ const siteConfig = {
   ],
 
   // ----- Love Letter -----
-  loveLetter: "My love, if you're reading this, it means you found the little world I made for you. I wanted a place, outside of texts and calls, where I could say everything I mean without running out of characters. Thank you for these five months — for your patience, your laugh, the way you make small moments feel like the whole point. Thank you for being you, My baby these words can't describe how proud i am of you and how much i love you, I promise to keep choosing you, on the easy days and the hard ones.",
+  loveLetter: "My love, if you're reading this, i wanna say Thank you for these five months — for your patience, your laugh, for still choosing me even when it's hard, the way you make small moments feel like the whole point. Thank you for being you, My baby these words can't describe how proud i am of you and how much i love you, I promise to keep choosing you, on the easy days and the hard ones, till the end of time baby, I'll always love you. be safe always my palangga 🥹🥰 ",
   loveLetterSignoff: "— your baby always 🥹",
 
   // ----- 5 Things I Love About You -----
