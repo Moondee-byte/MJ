@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Happy monthsary babyy ♡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600;1,800&family=Quicksand:wght@500;700&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="photo-layer" aria-hidden="true"></div>
+<div id="heart-layer" aria-hidden="true"></div>
+
+<button id="motion-toggle" class="mini-btn" aria-pressed="false">Calm photos</button>
+
+<main>
+  <!-- 1. WELCOME -->
+  <section id="welcome" class="screen active">
+    <h1 class="hero">Happy monthsary babyy</h1>
+    <p class="sub">I made a little something just for you ♡</p>
+    <button id="start-btn" class="btn">Play with me ♡</button>
+  </section>
+
+  <!-- 2. GAME -->
+  <section id="game" class="screen card">
+    <h2 class="title">Beat me to win my heart's treasure</h2>
+    <p class="rules">First to <b>2 wins</b> takes the round. Ties don't count ♡</p>
+    <div class="scoreboard" aria-live="polite">
+      <span>You: <b id="s-player">0</b></span>
+      <span>Ties: <b id="s-tie">0</b></span>
+      <span>AI: <b id="s-ai">0</b></span>
+    </div>
+    <div class="arena">
+      <div class="side"><div id="player-pick" class="pick">❔</div><small>You</small></div>
+      <div class="vs">vs</div>
+      <div class="side"><div id="ai-pick" class="pick">❔</div><small>AI</small></div>
+    </div>
+    <p id="result" class="result" aria-live="polite">Choose your move!</p>
+    <div class="choices">
+      <button class="choice" data-move="rock" aria-label="Rock">✊<span>Rock</span></button>
+      <button class="choice" data-move="paper" aria-label="Paper">✋<span>Paper</span></button>
+      <button class="choice" data-move="scissors" aria-label="Scissors">✌️<span>Scissors</span></button>
+    </div>
+    <button id="again-btn" class="btn hidden">Try again ♡</button>
+  </section>
+
+  <!-- 3. CHEST -->
+  <section id="reward" class="screen">
+    <h2 class="title big">You won my heart's treasure! ♡</h2>
+    <button id="chest" class="chest" aria-label="Open your surprise">
+      <div class="lid"></div><div class="glow"></div><div class="body"><i></i></div>
+    </button>
+    <button id="open-btn" class="btn">Open your surprise</button>
+  </section>
+
+  <!-- 4. LETTER -->
+  <section id="letter-screen" class="screen">
+    <article class="letter" tabindex="0">
+      <div id="letter-text"></div>
+    </article>
+    <p id="final" class="final hidden">I love you, babyy ♡</p>
+    <div class="row">
+      <button id="reread-btn" class="btn ghost">Read my letter again</button>
+      <button id="replay-btn" class="btn ghost">Play again</button>
+    </div>
+  </section>
+</main>
+<script src="script.js"></script>
+</body>
+</html>
