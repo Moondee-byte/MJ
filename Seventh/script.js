@@ -15,9 +15,9 @@ const girlfriendPhotos = Array.from(
    ✏️ EDIT HERE #2 — YOUR LOVE LETTER
    Replace the text between the backticks. Line breaks are kept.
    ===================================================== */
-const loveLetter = `YOUR LOVE LETTER GOES HERE
+const loveLetter = `To My One and Only
 
-Write each paragraph on its own line, just like this.`;
+Hii babyyy, happy monthsary po hehe `;
 
 const $ = s => document.querySelector(s);
 const WINS_NEEDED = 2;
