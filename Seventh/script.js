@@ -17,7 +17,36 @@ const girlfriendPhotos = Array.from(
    ===================================================== */
 const loveLetter = `To My One and Only
 
-Hii babyyy, happy monthsary po hehe `;
+Hii babyyy, happy monthsary po hehe 
+‎Seven months of happiness, sadness, crying, fun, excitement og uban pa. And despite all of the negatives, here we are Seven months into our relationship 💏 
+‎Doing our best everyday to be better for each other🥰 
+‎Staying strong bisan daghan away, although this month wala kaayo ta away and im Greatfull of that 🥰
+‎ 
+‎Thank you so much my love for choosing me always, thank you so much for all the love, thank you so much for all your support sa tanan ginabuhat nako.. Thank you sooooo much my love 🥹
+‎Naa ka always there for me bisan busy ka diha, you never failed to show your love to me baby bisan layo kaayo ta and i appreciate that so much 🥹
+‎And that's one thing im so proud of 🥰
+‎
+‎I am soooooo proud of you my love, my super duper pretty, strong and amazing girlfriend 😘🥰😍
+‎As always my love, word's can't explain how much i love you 🥰
+‎
+‎"There's no such thing as a scale that measures the love i have for you"
+‎
+‎Naksss quote pajud hshshs sako na gikan baby hehe 😁
+‎I love love love love love love love lovelove love love love love love love love love love love love love love love lovelove love love love love love love lovelove love love love love love love lovelove love love love love love love lovelove love love love love love love lovelove love love love love love love love youuuuuuuuu so much my favorite person in the world 😘🥰😍
+‎
+‎I want you keep being the best girlfriend ever, keep being pretty as always of course pretty kaayo 😍
+‎Keep doing your best babyyy. I see it always, Your efforts and your sacrifice, dili man nako ma sulti always but know that you are always seen by me my love. i love you, i care for you, i worry for you. so don't worry baby kay naa rako diri always para saimo i love you always my love, im here lang always for you hmmm. 
+‎Kung kalaban nimong kalibutan pwess kalaban nato ang kalibutan 😁
+‎Your number 1 backer babyy wwoohhoooooo! Kakampi ko nimo always palangga😘😘😘
+‎
+‎Napa sobra na akong daldal baby hehe 
+‎I have so much to say pa pero diri nalang sa taman hshsh🤭
+‎Dili man nako ma sulti tanan baby, remember hmmm "you are loved, you are important, you are the best, and you are my everything" And I LOVE YOU SO MUCH 😘🩷🥰
+‎
+‎--Your one and only:
+‎Imong asawa nga love and
+‎Palangga kaayo ka 🥰
+`;
 
 const $ = s => document.querySelector(s);
 const WINS_NEEDED = 2;
